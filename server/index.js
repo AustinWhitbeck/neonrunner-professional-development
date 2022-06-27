@@ -13,16 +13,14 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-  user: "root",
+  user: "sqluser",
   host: "localhost",
-  password: "",
-  database: "employeeSystem",
+  password: "password",
+  database: "neonrunner_db",
 });
 
 // res = what the front and will show (sent to front end)
 // req = front end requesting something from the backend
-
-//
 
 app.get("/", (req, res) => {
   res.send("Something different");
