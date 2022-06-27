@@ -1,8 +1,12 @@
-import { Typography } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import React from "react";
 
 const Home: React.FC = () => {
-  return <Typography variant="h2">Home</Typography>;
+  return (
+    <Container>
+      <Typography variant="h2">Home</Typography>
+    </Container>
+  );
 };
 
 export default Home;
