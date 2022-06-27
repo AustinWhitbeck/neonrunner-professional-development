@@ -5,7 +5,7 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
-const mysql = require("mysql)");
+const mysql = require("mysql");
 
 const db = mysql.createConnection({
   user: "root",
@@ -20,7 +20,7 @@ const db = mysql.createConnection({
 //
 
 app.get("/", (req, res) => {
-  res.send("Express + TypeScript Server");
+  res.send("Something different");
 });
 
 app.post("/create-user", (req, res) => {
