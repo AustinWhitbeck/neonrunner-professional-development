@@ -1,11 +1,16 @@
 import React from "react";
-import Login from "../components/pages/login";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "../components/pages/Home";
+import Login from "../components/pages/Login";
 
 const App: React.FC = () => {
   return (
-    <div className="App">
-      <Login></Login>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
