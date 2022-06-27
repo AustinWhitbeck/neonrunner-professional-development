@@ -6,6 +6,11 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT;
 const mysql = require("mysql");
+const cors = require("cors");
+
+app.use(cors());
+// needs to be changed into json when coming from express
+app.use(express.json());
 
 const db = mysql.createConnection({
   user: "root",
@@ -40,6 +45,7 @@ app.post("/create-user", (req, res) => {
       if (err) {
         console.log("error value", err);
       } else {
+        console.log("sent the values correctly");
         res.send("Values Inserted to users table");
       }
     }
