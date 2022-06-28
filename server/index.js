@@ -13,12 +13,18 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-  user: "sqluser",
-  port: process.env.DB_PORT,
+  user: "root",
+  // port: process.env.DB_PORT,
   host: "localhost",
   password: "password",
   database: "neonrunner_db",
+  socketPath: "/tmp/mysql.sock",
 });
+
+db.connect();
+
+console.log("db value", db);
+// db.connect();
 
 // res = what the front and will show (sent to front end)
 // req = front end requesting something from the backend
@@ -54,8 +60,8 @@ app.post("/create-user", (req, res) => {
         console.log("error value", err);
       } else {
         console.log("sent the values correctly");
-        res.send("Values Inserted to users table");
       }
+      res.send("Values Inserted to users table");
     }
   );
 });
