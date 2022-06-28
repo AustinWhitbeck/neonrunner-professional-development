@@ -1,6 +1,6 @@
 import { Button, Card, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { addNewUser } from "../../../repository";
+import { addNewUser, getAllUsers } from "../../../repository";
 
 const index: React.FC = () => {
   const [name, setName] = useState<string>("");
@@ -9,6 +9,7 @@ const index: React.FC = () => {
 
   const textfieldStyle = {
     marginBottom: "20px",
+    borderColor: "red",
   };
 
   const handleNewUserSubmit = (): void => {
@@ -26,7 +27,6 @@ const index: React.FC = () => {
     <Card
       sx={{
         width: "300px",
-        height: "300px",
         padding: "20px",
         textAlign: "center",
         display: "block",
@@ -42,7 +42,6 @@ const index: React.FC = () => {
           setName(e.target.value);
         }}
         sx={textfieldStyle}
-        color="error"
       />
       <TextField
         label="Username"
@@ -60,7 +59,12 @@ const index: React.FC = () => {
         }}
         sx={textfieldStyle}
       />
-      <Button onClick={handleNewUserSubmit}>Submit</Button>
+      <Button onClick={handleNewUserSubmit} sx={{ width: "100%" }}>
+        Submit
+      </Button>
+      <Button onClick={getAllUsers} sx={{ width: "100%" }}>
+        Get all Users
+      </Button>
     </Card>
   );
 };

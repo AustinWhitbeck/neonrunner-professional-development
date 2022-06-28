@@ -5,5 +5,3 @@ export const CardContainer = styled.div`
   height: 400px;
   background-color: "purple";
 `;
-
-export default CardContainer;

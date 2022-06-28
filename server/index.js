@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.EXPRESS_PORT;
 const mysql = require("mysql");
 const cors = require("cors");
 
@@ -14,6 +14,7 @@ app.use(express.json());
 
 const db = mysql.createConnection({
   user: "sqluser",
+  port: process.env.DB_PORT,
   host: "localhost",
   password: "password",
   database: "neonrunner_db",
@@ -23,7 +24,15 @@ const db = mysql.createConnection({
 // req = front end requesting something from the backend
 
 app.get("/", (req, res) => {
-  res.send("Something different");
+  console.log("inside app.get");
+  res.send("some stuff");
+  db.query("SELECT * FROM users", (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
 });
 
 app.post("/create-user", (req, res) => {
@@ -41,6 +50,7 @@ app.post("/create-user", (req, res) => {
     [name, username, password, avatar],
     (err, result) => {
       if (err) {
+        console.log("confirmed talking to front end");
         console.log("error value", err);
       } else {
         console.log("sent the values correctly");

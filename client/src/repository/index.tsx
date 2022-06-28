@@ -14,3 +14,10 @@ export const addNewUser = (user: User): void => {
       console.log("successful posting of new user");
     });
 };
+
+export const getAllUsers = (): void => {
+  // two arguments: path and body
+  axios.get("http://localhost:3001/").then(() => {
+    console.log("successful getting all users");
+  });
+};

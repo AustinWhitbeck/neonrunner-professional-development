@@ -5,3 +5,11 @@ export interface User {
   password: string;
   avatar?: string;
 }
+
+export interface GameCardModel {
+  defense: number | string;
+  flavorText: string;
+  name: string;
+  power: number | string;
+  rarity: string;
+}
