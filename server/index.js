@@ -31,7 +31,6 @@ console.log("db value", db);
 
 app.get("/", (req, res) => {
   console.log("inside app.get");
-  res.send("some stuff");
   db.query("SELECT * FROM users", (err, result) => {
     if (err) {
       console.log(err);

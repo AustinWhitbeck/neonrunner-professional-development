@@ -15,9 +15,10 @@ export const addNewUser = (user: User): void => {
     });
 };
 
-export const getAllUsers = (): void => {
+export const getAllUsers = (): User[] => {
   // two arguments: path and body
-  axios.get("http://localhost:3001/").then(() => {
-    console.log("successful getting all users");
+  axios.get("http://localhost:3001/").then((result) => {
+    console.log("successful getting all users,", result);
+    return result.data;
   });
 };
