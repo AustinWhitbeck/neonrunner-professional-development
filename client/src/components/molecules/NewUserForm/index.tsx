@@ -26,10 +26,15 @@ const index: React.FC = () => {
     addNewUser(newUserObject);
   };
 
-  const handleGetAllUsers = (): void => {
-    const fetchedUsers = getAllUsers();
-    console.log("fetchedUsers value", fetchedUsers);
-    setAllUsers(fetchedUsers);
+  const handleGetAllUsers = async (): Promise<void> => {
+    const fetchedUsers = await getAllUsers();
+    console.log(
+      "🚀 ~ file: index.tsx ~ line 31 ~ handleGetAllUsers ~ fetchedUsers",
+      fetchedUsers
+    );
+    if (Array.isArray(fetchedUsers)) {
+      setAllUsers(fetchedUsers);
+    }
   };
 
   return (

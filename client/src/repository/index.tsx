@@ -15,10 +15,26 @@ export const addNewUser = (user: User): void => {
     });
 };
 
-export const getAllUsers = (): User[] => {
-  // two arguments: path and body
-  axios.get("http://localhost:3001/").then((result) => {
-    console.log("successful getting all users,", result);
-    return result.data;
-  });
+// Promise<User[]>
+
+export const getAllUsers = async (): Promise<User[] | string> => {
+  try {
+    // 👇️ const data: GetUsersResponse
+    const { data, status } = await axios.get<User[]>(
+      "http://localhost:3001/all-users"
+    );
+
+    // 👇️ "response status is: 200"
+    console.log("response status is: ", status);
+
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log("error message: ", error.message);
+      return error.message;
+    } else {
+      console.log("unexpected error: ", error);
+      return "An unexpected error occurred";
+    }
+  }
 };
