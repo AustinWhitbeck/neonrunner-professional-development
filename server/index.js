@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require("passport");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -22,6 +23,9 @@ const db = mysql.createConnection({
 });
 
 db.connect();
+
+// // PASSPORT SETUP
+// app.use();
 
 console.log("db value", db);
 // db.connect();

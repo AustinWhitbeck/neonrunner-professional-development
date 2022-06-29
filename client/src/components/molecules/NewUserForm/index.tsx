@@ -1,32 +1,75 @@
 import { Button, Card, TextField, Typography } from "@mui/material";
-import { Container } from "@mui/system";
-import React, { ReactNode, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { User } from "../../../models/models";
 import { addNewUser, getAllUsers } from "../../../repository";
 
-const index: React.FC = () => {
+const NewUserForm: React.FC = () => {
+  // const { allUsers, handleGetAllUsers } = useContext(userContext);
+
+  // TODO: Look at Contact Support in molecules in the PWA
+  // As an example of making this whole structure into an object to iterate over.
   const [name, setName] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [passwordConfirm, setPasswordConfirm] = useState<string>("");
+
   const [allUsers, setAllUsers] = useState<User[]>([]);
+
+  // start with return, then if signup is clicked change form to signup.
+  const [returnUser, setReturnUser] = useState<boolean>(true);
+  const [formMessage, setFormErrorMessage] = useState<{
+    message: string;
+    color: string;
+  }>({
+    message: "",
+    color: "success",
+  });
 
   const textfieldStyle = {
     marginBottom: "20px",
-    borderColor: "red",
+  };
+
+  const handleSignUp = (): void => {
+    setReturnUser(!returnUser);
   };
 
   const handleNewUserSubmit = (): void => {
-    const newUserObject = {
-      name,
-      username,
-      password,
-      avatar:
-        "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
-    };
-    addNewUser(newUserObject);
+    if (
+      password === passwordConfirm &&
+      password !== "" &&
+      username !== "" &&
+      name !== ""
+    ) {
+      const newUserObject = {
+        name,
+        username,
+        password,
+        avatar:
+          "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+      };
+      addNewUser(newUserObject);
+    }
+    if (password !== passwordConfirm) {
+      setFormErrorMessage({ message: "Password Mismatch", color: "error" });
+    } else if (username === "" || name === "") {
+      setFormErrorMessage({
+        message: "Please Fill out all fields",
+        color: "error",
+      });
+    }
+  };
+
+  const checkUserMatch = (): void => {
+    const matchedUser = allUsers.find((user) => user.username == username);
+    if (matchedUser) {
+      setFormErrorMessage({ message: "Login successful!", color: "success" });
+    } else {
+      setFormErrorMessage({ message: "Login error", color: "error" });
+    }
   };
 
   const handleGetAllUsers = async (): Promise<void> => {
+    console.log("in handleGetAllUsers");
     const fetchedUsers = await getAllUsers();
     console.log(
       "🚀 ~ file: index.tsx ~ line 31 ~ handleGetAllUsers ~ fetchedUsers",
@@ -36,6 +79,11 @@ const index: React.FC = () => {
       setAllUsers(fetchedUsers);
     }
   };
+
+  useEffect((): void => {
+    console.log("use effect on form");
+    handleGetAllUsers();
+  }, []);
 
   return (
     <div>
@@ -47,17 +95,15 @@ const index: React.FC = () => {
           display: "block",
         }}
       >
-        <Typography variant="h4" sx={{ marginBottom: "20px" }}>
-          Login Card
+        <Typography
+          variant="h4"
+          sx={{ marginBottom: "20px", fontFamily: "orbitron" }}
+        >
+          {returnUser ? "Login" : "Sign Up"}
         </Typography>
-        <TextField
-          label="Name"
-          value={name}
-          onChange={(e): void => {
-            setName(e.target.value);
-          }}
-          sx={textfieldStyle}
-        />
+        <Typography color={formMessage.color} sx={textfieldStyle}>
+          {formMessage.message}
+        </Typography>
         <TextField
           label="Username"
           value={username}
@@ -74,22 +120,56 @@ const index: React.FC = () => {
           }}
           sx={textfieldStyle}
         />
-        <Button onClick={handleNewUserSubmit} sx={{ width: "100%" }}>
+        {!returnUser ? (
+          <>
+            <TextField
+              label="Confirm Password"
+              value={passwordConfirm}
+              color={
+                password === passwordConfirm && password.length > 0
+                  ? "primary"
+                  : "error"
+              }
+              onChange={(e): void => {
+                setPasswordConfirm(e.target.value);
+              }}
+              sx={textfieldStyle}
+            />
+            <TextField
+              label="Name"
+              value={name}
+              onChange={(e): void => {
+                setName(e.target.value);
+              }}
+              sx={textfieldStyle}
+            />
+          </>
+        ) : (
+          ""
+        )}
+
+        <Button
+          onClick={handleSignUp}
+          sx={{
+            width: "100%",
+            fontSize: "10px",
+            color: "black",
+          }}
+        >
+          {returnUser ? "Sign-Up" : "Cancel Sign Up"}
+        </Button>
+        <Button
+          onClick={returnUser ? checkUserMatch : handleNewUserSubmit}
+          sx={{ width: "100%" }}
+        >
           Submit
         </Button>
         <Button onClick={handleGetAllUsers} sx={{ width: "100%" }}>
           Get all Users
         </Button>
       </Card>
-      <Container>
-        {allUsers.length > 0
-          ? allUsers.map(
-              (user): ReactNode => <Typography>{user.name}</Typography>
-            )
-          : ""}
-      </Container>
     </div>
   );
 };
 
-export default index;
+export default NewUserForm;
