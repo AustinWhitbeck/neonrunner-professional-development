@@ -1,9 +1,4 @@
-import React, {
-  Dispatch,
-  PropsWithChildren,
-  SetStateAction,
-  useState,
-} from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { User } from "../models/models";
 import { getAllUsers } from "../repository";
 
@@ -12,6 +7,7 @@ interface UserContext {
   handleGetAllUsers: () => Promise<void>;
   currentUser: User;
   setCurrentUser: Dispatch<SetStateAction<User>>;
+  children: React.ReactNode;
 }
 
 export const userContext = React.createContext<UserContext>({} as UserContext);
@@ -36,9 +32,7 @@ const handleGetAllUsers = async (): Promise<void> => {
   }
 };
 
-const UserContextProvider: React.FC<PropsWithChildren<UserContext>> = ({
-  children,
-}) => {
+const UserContextProvider: React.FC<UserContext> = ({ children }) => {
   return (
     <userContext.Provider
       value={{
@@ -46,6 +40,7 @@ const UserContextProvider: React.FC<PropsWithChildren<UserContext>> = ({
         handleGetAllUsers,
         currentUser,
         setCurrentUser,
+        children,
       }}
     >
       {children}

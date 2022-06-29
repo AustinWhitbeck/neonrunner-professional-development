@@ -1,6 +1,7 @@
 import { Container, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GameCardModel } from "../../../models/models";
+import { getAllCards } from "../../../repository";
 import GameCard from "../../molecules/GameCard";
 import CardCollectionManager from "../../organisms/CardCollectionManager";
 
@@ -13,6 +14,26 @@ const demoCard: GameCardModel = {
 };
 
 const UserCollection: React.FC = () => {
+  const [allCards, setAllCards] = useState<GameCardModel[]>([]);
+  const [userCollection, setUserCollection] = useState<GameCardModel[]>([]);
+  const [collectionType, setCollectionType] = useState<boolean>(true);
+
+  const handleGetAllCards = async (): Promise<void> => {
+    console.log("in handleGetAllUsers");
+    const fetchedCards = await getAllCards();
+    if (Array.isArray(fetchedCards)) {
+      setAllCards(fetchedCards);
+    }
+  };
+
+  const handleCollectionType = (): void => {
+    setCollectionType(!collectionType);
+  };
+
+  useEffect(() => {
+    handleGetAllCards();
+  }, []);
+
   return (
     <div>
       <Typography
@@ -27,7 +48,7 @@ const UserCollection: React.FC = () => {
       >
         UserCollection
       </Typography>
-      <CardCollectionManager />
+      <CardCollectionManager handleCollectionType={handleCollectionType} />
       <Container sx={{ padding: "20px", marginLeft: "150px" }}>
         <GameCard card={demoCard} />
       </Container>

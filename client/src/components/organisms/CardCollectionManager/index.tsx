@@ -1,14 +1,20 @@
-import { Container, IconButton, Typography } from "@mui/material";
+import { Button, Container, IconButton, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { GiMaterialsScience } from "react-icons/gi";
 import React from "react";
+
+interface Props {
+  handleCollectionType: () => void;
+}
 
 const ButtonContainerSx = {
   display: "flex",
   padding: "5px",
 };
 
-const CardCollectionManager: React.FC = () => {
+const CardCollectionManager: React.FC<Props> = ({
+  handleCollectionType,
+}: Props) => {
   return (
     <Container
       disableGutters
@@ -42,6 +48,11 @@ const CardCollectionManager: React.FC = () => {
           <GiMaterialsScience color="white" size="30px" />
         </IconButton>
         <Typography fontSize="30px"> 100</Typography>
+      </Container>
+      <Container sx={ButtonContainerSx}>
+        <Button onClick={handleCollectionType} sx={{ color: "pink" }}>
+          Show All Cards
+        </Button>
       </Container>
     </Container>
   );

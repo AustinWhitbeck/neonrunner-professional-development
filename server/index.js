@@ -27,14 +27,21 @@ db.connect();
 // // PASSPORT SETUP
 // app.use();
 
-console.log("db value", db);
-// db.connect();
-
 // res = what the front and will show (sent to front end)
 // req = front end requesting something from the backend
 
 app.get("/all-users", (req, res) => {
   db.query("SELECT * FROM users", (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+app.get("/all-cards", (req, res) => {
+  db.query("SELECT * FROM all_cards", (err, result) => {
     if (err) {
       console.log(err);
     } else {

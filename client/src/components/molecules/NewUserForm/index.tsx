@@ -4,7 +4,9 @@ import { User } from "../../../models/models";
 import { addNewUser, getAllUsers } from "../../../repository";
 
 const NewUserForm: React.FC = () => {
-  // const { allUsers, handleGetAllUsers } = useContext(userContext);
+  // const { currentUser } = useContext(userContext);
+
+  // console.log("current user value", currentUser);
 
   // TODO: Look at Contact Support in molecules in the PWA
   // As an example of making this whole structure into an object to iterate over.
