@@ -85,3 +85,19 @@ export const addNewUser = (user: User): void => {
       console.log("successful posting of new user");
     });
 };
+
+export const addNewCustomCard = (card: GameCardModel): void => {
+  // two arguments: path and body
+  console.log("card value", card);
+  axios
+    .post("http://localhost:3001/custom-card", {
+      name: card.name,
+      attack: card.attack,
+      defense: card.defense,
+      flavor_text: card.flavor_text,
+      rarity: card.rarity,
+    })
+    .then(() => {
+      console.log("successful posting of new custom card!");
+    });
+};

@@ -75,6 +75,34 @@ app.post("/create-user", (req, res) => {
   );
 });
 
+app.post("/custom-card", (req, res) => {
+  console.log("🚀 ~ file: index.js ~ line 79 ~ app.post ~ req", req);
+  const name = req.body.name;
+  const attack = req.body.attack;
+  const defense = req.body.defense;
+  const rarity = req.body.rarity;
+  const flavor = req.body.flavor_text;
+  console.log("inside custom card post method");
+
+  // call the db variable to start an SQL statement
+  // when putting the values, for security, pass questions marks and then an array (in the same order) with the variables we are using
+  // as declared above
+
+  db.query(
+    "INSERT INTO all_cards (name, attack, defense, flavor_text, rarity) VALUES (?,?,?,?,?)",
+    [name, attack, defense, flavor, rarity],
+    (err, result) => {
+      if (err) {
+        console.log("confirmed talking to front end");
+        console.log("error value", err);
+      } else {
+        console.log("sent the values correctly");
+      }
+      res.send("New Card added to all cards");
+    }
+  );
+});
+
 app.listen(port, () => {
   console.log(`[server]: Server is running at https://localhost:${port}`);
 });

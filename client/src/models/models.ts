@@ -8,8 +8,8 @@ export interface User {
 
 export interface GameCardModel {
   defense: number | string;
-  flavorText: string;
+  flavor_text: string;
   name: string;
-  power: number | string;
+  attack: number | string;
   rarity: string;
 }

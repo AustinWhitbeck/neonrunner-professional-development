@@ -1,17 +1,9 @@
 import { Container, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { GameCardModel } from "../../../models/models";
 import { getAllCards } from "../../../repository";
 import GameCard from "../../molecules/GameCard";
 import CardCollectionManager from "../../organisms/CardCollectionManager";
-
-const demoCard: GameCardModel = {
-  defense: 2,
-  flavorText: "Some cool stuff about this card",
-  power: 4,
-  rarity: "noble",
-  name: "TestingCard",
-};
 
 const UserCollection: React.FC = () => {
   const [allCards, setAllCards] = useState<GameCardModel[]>([]);
@@ -48,9 +40,23 @@ const UserCollection: React.FC = () => {
       >
         UserCollection
       </Typography>
-      <CardCollectionManager handleCollectionType={handleCollectionType} />
-      <Container sx={{ padding: "20px", marginLeft: "150px" }}>
-        <GameCard card={demoCard} />
+      <CardCollectionManager
+        handleCollectionType={handleCollectionType}
+        collectionType={collectionType}
+      />
+      <Container
+        sx={{
+          padding: "20px",
+          marginLeft: "150px",
+          display: "flex",
+          flexWrap: "wrap",
+        }}
+      >
+        {allCards.map(
+          (card): ReactNode => (
+            <GameCard card={card} />
+          )
+        )}
       </Container>
     </div>
   );

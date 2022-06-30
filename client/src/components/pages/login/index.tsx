@@ -11,12 +11,11 @@ interface Props {
 
 const Login: React.FC<Props> = ({ currentUser, setUser }: Props) => {
   return (
-    <div>
-      <Typography variant="h1">Login Screen</Typography>
-      <Container sx={{ display: "flex", justifyContent: "center" }}>
-        <NewUserForm props={{ currentUser, setUser }} />
-      </Container>
-    </div>
+    <Container
+      sx={{ display: "flex", justifyContent: "center", paddingTop: "100px" }}
+    >
+      <NewUserForm props={{ currentUser, setUser }} />
+    </Container>
   );
 };
 

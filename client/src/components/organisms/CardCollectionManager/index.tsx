@@ -5,6 +5,7 @@ import React from "react";
 
 interface Props {
   handleCollectionType: () => void;
+  collectionType: boolean;
 }
 
 const ButtonContainerSx = {
@@ -14,6 +15,7 @@ const ButtonContainerSx = {
 
 const CardCollectionManager: React.FC<Props> = ({
   handleCollectionType,
+  collectionType,
 }: Props) => {
   return (
     <Container
@@ -51,7 +53,7 @@ const CardCollectionManager: React.FC<Props> = ({
       </Container>
       <Container sx={ButtonContainerSx}>
         <Button onClick={handleCollectionType} sx={{ color: "pink" }}>
-          Show All Cards
+          {collectionType ? "Show All Cards" : "Show my collection"}
         </Button>
       </Container>
     </Container>

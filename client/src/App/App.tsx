@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavBar from "../components/organisms/NavBar";
+import CustomCardCreation from "../components/pages/CustomCardCreation";
 import ErrorPage from "../components/pages/ErrorPage";
 import Home from "../components/pages/Home";
 import Login from "../components/pages/Login";
@@ -27,6 +28,7 @@ const App: React.FC = () => {
           element={<Login currentUser={currentUser} setUser={setCurrentuser} />}
         />
         <Route path="/collection" element={<UserCollection />} />
+        <Route path="/custom" element={<CustomCardCreation />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </BrowserRouter>

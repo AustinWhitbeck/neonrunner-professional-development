@@ -9,14 +9,17 @@ interface FullCard {
 }
 
 const GameCard: React.FC<FullCard> = ({ card }: FullCard) => {
+  console.log("card value", card);
   return (
     <Card
       sx={{
         width: "200px",
+        minWidth: "200px",
         height: "280px",
         textAlign: "center",
         border: "solid purple 4px",
         backgroundColor: "lightblue",
+        margin: "10px",
       }}
     >
       <Typography
@@ -26,7 +29,7 @@ const GameCard: React.FC<FullCard> = ({ card }: FullCard) => {
         {card.name}
       </Typography>
       <Container sx={{ width: "180px", height: "80px" }}>
-        <div>{card.power}</div>
+        <div>{card.attack}</div>
         <VideogameAssetOffIcon
           sx={{ backgroundColor: "cyan", color: "purple" }}
         />
@@ -40,7 +43,7 @@ const GameCard: React.FC<FullCard> = ({ card }: FullCard) => {
           backgroundColor: "white",
         }}
       >
-        <Typography variant="body2">{card.flavorText}</Typography>
+        <Typography variant="body2">{card.flavor_text}</Typography>
       </Container>
       <div>{card.rarity}</div>
     </Card>

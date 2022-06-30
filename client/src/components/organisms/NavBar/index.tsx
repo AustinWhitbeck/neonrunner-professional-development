@@ -1,4 +1,4 @@
-import { Button, Container, Typography } from "@mui/material";
+import { Button, Container, fabClasses, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "../../../models/models";
@@ -12,6 +12,7 @@ const NavBar: React.FC<Props> = ({ user }: Props) => {
   return (
     <Container
       disableGutters
+      maxWidth={false}
       sx={{
         backgroundColor: "purple",
         color: "cyan",
@@ -37,6 +38,9 @@ const NavBar: React.FC<Props> = ({ user }: Props) => {
           variant="outlined"
         >
           My Collection
+        </Button>
+        <Button onClick={(): void => navigate("/custom")} variant="outlined">
+          Custom Card
         </Button>
       </div>
     </Container>
