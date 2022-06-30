@@ -1,14 +1,20 @@
 import { Typography } from "@mui/material";
 import { Container } from "@mui/system";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
+import { User } from "../../../models/models";
 import NewUserForm from "../../molecules/NewUserForm";
 
-const Login: React.FC = () => {
+interface Props {
+  currentUser: User;
+  setUser: Dispatch<SetStateAction<User>>;
+}
+
+const Login: React.FC<Props> = ({ currentUser, setUser }: Props) => {
   return (
     <div>
       <Typography variant="h1">Login Screen</Typography>
       <Container sx={{ display: "flex", justifyContent: "center" }}>
-        <NewUserForm />
+        <NewUserForm props={{ currentUser, setUser }} />
       </Container>
     </div>
   );

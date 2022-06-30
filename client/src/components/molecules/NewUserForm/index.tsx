@@ -1,11 +1,17 @@
 import { Button, Card, TextField, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { User } from "../../../models/models";
 import { addNewUser, getAllUsers } from "../../../repository";
 
-const NewUserForm: React.FC = () => {
-  // const { currentUser } = useContext(userContext);
+interface Props {
+  props: {
+    currentUser: User;
+    setUser: Dispatch<SetStateAction<User>>;
+  };
+}
 
+const NewUserForm: React.FC<Props> = ({ props }: Props) => {
+  // const { currentUser } = useContext(userContext);
   // console.log("current user value", currentUser);
 
   // TODO: Look at Contact Support in molecules in the PWA
@@ -65,6 +71,7 @@ const NewUserForm: React.FC = () => {
     const matchedUser = allUsers.find((user) => user.username == username);
     if (matchedUser) {
       setFormErrorMessage({ message: "Login successful!", color: "success" });
+      props.setUser(matchedUser);
     } else {
       setFormErrorMessage({ message: "Login error", color: "error" });
     }

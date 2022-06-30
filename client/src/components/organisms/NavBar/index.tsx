@@ -1,15 +1,45 @@
-import { Button, Typography } from "@mui/material";
+import { Button, Container, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { User } from "../../../models/models";
 
-const navigate = useNavigate();
+interface Props {
+  user: User;
+}
 
-const NavBar: React.FC = () => {
+const NavBar: React.FC<Props> = ({ user }: Props) => {
+  const navigate = useNavigate();
   return (
-    <div>
-      <Typography>Nav Bar</Typography>
-      <Button onClick={(): void => navigate("/login")}>Login</Button>
-    </div>
+    <Container
+      disableGutters
+      sx={{
+        backgroundColor: "purple",
+        color: "cyan",
+        display: "flex",
+        justifyContent: "space-between",
+        width: "100%",
+        padding: "5px 20px",
+      }}
+    >
+      <Typography>User: {user.username}</Typography>
+      <div>
+        <Button onClick={(): void => navigate("/login")} variant="outlined">
+          Login
+        </Button>
+        <Button
+          onClick={(): void => navigate("/collection")}
+          variant="outlined"
+        >
+          Profile
+        </Button>
+        <Button
+          onClick={(): void => navigate("/collection")}
+          variant="outlined"
+        >
+          My Collection
+        </Button>
+      </div>
+    </Container>
   );
 };
 

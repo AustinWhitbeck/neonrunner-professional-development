@@ -3,11 +3,11 @@ import { User } from "../models/models";
 import { getAllUsers } from "../repository";
 
 interface UserContext {
-  allUsers: User[];
-  handleGetAllUsers: () => Promise<void>;
-  currentUser: User;
-  setCurrentUser: Dispatch<SetStateAction<User>>;
-  children: React.ReactNode;
+  allUsers?: User[];
+  handleGetAllUsers?: () => Promise<void>;
+  currentUser?: User;
+  setCurrentUser?: Dispatch<SetStateAction<User>>;
+  children?: React.ReactNode;
 }
 
 export const userContext = React.createContext<UserContext>({} as UserContext);
@@ -32,7 +32,7 @@ const handleGetAllUsers = async (): Promise<void> => {
   }
 };
 
-const UserContextProvider: React.FC<UserContext> = ({ children }) => {
+const UserContextProvider: React.FC<UserContext | null> = () => {
   return (
     <userContext.Provider
       value={{
@@ -40,11 +40,8 @@ const UserContextProvider: React.FC<UserContext> = ({ children }) => {
         handleGetAllUsers,
         currentUser,
         setCurrentUser,
-        children,
       }}
-    >
-      {children}
-    </userContext.Provider>
+    ></userContext.Provider>
   );
 };
 
