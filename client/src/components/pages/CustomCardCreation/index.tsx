@@ -18,7 +18,7 @@ const CustomCardCreation: React.FC = () => {
   const [attack, setAttack] = useState<number>(1);
   const [defense, setDefense] = useState<number>(1);
   const [flavor, setFlavor] = useState<string>("Flavor Text");
-  const [rarity, setRarity] = useState<string>("Peasant");
+  const [rarity, setRarity] = useState<number>(1);
 
   const inputSx = {
     margin: "0 15px 15px 0",
@@ -76,17 +76,17 @@ const CustomCardCreation: React.FC = () => {
             <InputLabel id="demo-simple-select-label">Rarity</InputLabel>
             <Select
               fullWidth
-              value={rarity}
+              value={rarity.toString()}
               defaultValue="royal"
               label="Rarity"
               onChange={(e): void => {
-                setRarity(e.target.value);
+                setRarity(parseInt(e.target.value));
               }}
             >
-              <MenuItem value="royal">Royal</MenuItem>
-              <MenuItem value="noble">Noble</MenuItem>
-              <MenuItem value="artisan">Artisan</MenuItem>
-              <MenuItem value="peasant">Peasant</MenuItem>
+              <MenuItem value={1}>Royal</MenuItem>
+              <MenuItem value={2}>Noble</MenuItem>
+              <MenuItem value={3}>Artisan</MenuItem>
+              <MenuItem value={4}>Peasant</MenuItem>
             </Select>
           </FormControl>
         </Box>

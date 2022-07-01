@@ -1,4 +1,3 @@
-import { Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import React, { Dispatch, SetStateAction } from "react";
 import { User } from "../../../models/models";

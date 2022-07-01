@@ -30,6 +30,8 @@ db.connect();
 // res = what the front and will show (sent to front end)
 // req = front end requesting something from the backend
 
+// *** GET REQUESTS *** //
+
 app.get("/all-users", (req, res) => {
   db.query("SELECT * FROM users", (err, result) => {
     if (err) {
@@ -50,6 +52,21 @@ app.get("/all-cards", (req, res) => {
   });
 });
 
+app.get("/user_collection/:id", (req, res) => {
+  console.log("request in user_collection", req);
+  const id = req.params.id;
+  console.log("id inside user_collecton", id);
+  db.query(`SELECT * FROM user_cards WHERE user_id=${id}`, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+// *** POST REQUESTS *** //
+
 app.post("/create-user", (req, res) => {
   const name = req.body.name;
   const username = req.body.username;
@@ -65,7 +82,6 @@ app.post("/create-user", (req, res) => {
     [name, username, password, avatar],
     (err, result) => {
       if (err) {
-        console.log("confirmed talking to front end");
         console.log("error value", err);
       } else {
         console.log("sent the values correctly");
@@ -76,13 +92,11 @@ app.post("/create-user", (req, res) => {
 });
 
 app.post("/custom-card", (req, res) => {
-  console.log("🚀 ~ file: index.js ~ line 79 ~ app.post ~ req", req);
   const name = req.body.name;
   const attack = req.body.attack;
   const defense = req.body.defense;
   const rarity = req.body.rarity;
   const flavor = req.body.flavor_text;
-  console.log("inside custom card post method");
 
   // call the db variable to start an SQL statement
   // when putting the values, for security, pass questions marks and then an array (in the same order) with the variables we are using
@@ -93,11 +107,11 @@ app.post("/custom-card", (req, res) => {
     [name, attack, defense, flavor, rarity],
     (err, result) => {
       if (err) {
-        console.log("confirmed talking to front end");
         console.log("error value", err);
       } else {
         console.log("sent the values correctly");
       }
+
       res.send("New Card added to all cards");
     }
   );

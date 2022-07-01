@@ -14,6 +14,7 @@ export const userContext = React.createContext<UserContext>({} as UserContext);
 
 const [allUsers, setAllUsers] = useState<User[]>([]);
 const [currentUser, setCurrentUser] = useState<User>({
+  user_id: null,
   username: "",
   password: "",
   name: "Guest",

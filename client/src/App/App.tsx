@@ -12,6 +12,7 @@ import { User } from "../models/models";
 
 const App: React.FC = () => {
   const [currentUser, setCurrentuser] = useState<User>({
+    user_id: 1,
     username: "Guest",
     name: "",
     password: "",
@@ -27,7 +28,10 @@ const App: React.FC = () => {
           path="/login"
           element={<Login currentUser={currentUser} setUser={setCurrentuser} />}
         />
-        <Route path="/collection" element={<UserCollection />} />
+        <Route
+          path="/collection"
+          element={<UserCollection currentUser={currentUser} />}
+        />
         <Route path="/custom" element={<CustomCardCreation />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>

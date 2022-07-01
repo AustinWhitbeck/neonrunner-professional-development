@@ -49,6 +49,7 @@ const NewUserForm: React.FC<Props> = ({ props }: Props) => {
       name !== ""
     ) {
       const newUserObject = {
+        user_id: null,
         name,
         username,
         password,
@@ -78,19 +79,13 @@ const NewUserForm: React.FC<Props> = ({ props }: Props) => {
   };
 
   const handleGetAllUsers = async (): Promise<void> => {
-    console.log("in handleGetAllUsers");
     const fetchedUsers = await getAllUsers();
-    console.log(
-      "🚀 ~ file: index.tsx ~ line 31 ~ handleGetAllUsers ~ fetchedUsers",
-      fetchedUsers
-    );
     if (Array.isArray(fetchedUsers)) {
       setAllUsers(fetchedUsers);
     }
   };
 
   useEffect((): void => {
-    console.log("use effect on form");
     handleGetAllUsers();
   }, []);
 

@@ -9,7 +9,23 @@ interface FullCard {
 }
 
 const GameCard: React.FC<FullCard> = ({ card }: FullCard) => {
-  console.log("card value", card);
+  let strRarity = "";
+  switch (card.rarity) {
+    case 1:
+      strRarity = "Royal";
+      break;
+    case 2:
+      strRarity = "Noble";
+      break;
+    case 3:
+      strRarity = "Artisan";
+      break;
+    case 4:
+      strRarity = "Peasant";
+      break;
+    default:
+      break;
+  }
   return (
     <Card
       sx={{
@@ -45,7 +61,7 @@ const GameCard: React.FC<FullCard> = ({ card }: FullCard) => {
       >
         <Typography variant="body2">{card.flavor_text}</Typography>
       </Container>
-      <div>{card.rarity}</div>
+      <div>{strRarity}</div>
     </Card>
   );
 };

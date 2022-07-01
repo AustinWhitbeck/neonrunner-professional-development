@@ -1,20 +1,36 @@
 import { Container, Typography } from "@mui/material";
 import React, { ReactNode, useEffect, useState } from "react";
-import { GameCardModel } from "../../../models/models";
-import { getAllCards } from "../../../repository";
+import { GameCardModel, User } from "../../../models/models";
+import { getAllCards, getUserCardCollection } from "../../../repository";
 import GameCard from "../../molecules/GameCard";
 import CardCollectionManager from "../../organisms/CardCollectionManager";
 
-const UserCollection: React.FC = () => {
+interface Props {
+  currentUser: User;
+}
+
+const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
   const [allCards, setAllCards] = useState<GameCardModel[]>([]);
   const [userCollection, setUserCollection] = useState<GameCardModel[]>([]);
   const [collectionType, setCollectionType] = useState<boolean>(true);
 
   const handleGetAllCards = async (): Promise<void> => {
-    console.log("in handleGetAllUsers");
     const fetchedCards = await getAllCards();
     if (Array.isArray(fetchedCards)) {
       setAllCards(fetchedCards);
+    }
+  };
+
+  const handleGetUserCollection = async (): Promise<void> => {
+    console.log("handleGetUserCollection");
+    console.log("current user info", currentUser);
+    if (currentUser.user_id) {
+      console.log("inside if statement");
+      const fetchedUserCards = await getUserCardCollection(currentUser.user_id);
+      if (Array.isArray(fetchedUserCards)) {
+        setUserCollection(fetchedUserCards);
+        console.log("fetchedUserCards value", fetchedUserCards);
+      }
     }
   };
 
@@ -24,6 +40,7 @@ const UserCollection: React.FC = () => {
 
   useEffect(() => {
     handleGetAllCards();
+    handleGetUserCollection();
   }, []);
 
   return (
@@ -43,6 +60,7 @@ const UserCollection: React.FC = () => {
       <CardCollectionManager
         handleCollectionType={handleCollectionType}
         collectionType={collectionType}
+        collection={collectionType ? allCards : userCollection}
       />
       <Container
         sx={{
@@ -52,9 +70,9 @@ const UserCollection: React.FC = () => {
           flexWrap: "wrap",
         }}
       >
-        {allCards.map(
+        {(collectionType ? allCards : userCollection).map(
           (card): ReactNode => (
-            <GameCard card={card} />
+            <GameCard card={card} key={card.card_id} />
           )
         )}
       </Container>

@@ -11,6 +11,28 @@ export const getAllCards = async (): Promise<GameCardModel[] | string> => {
     );
 
     // 👇️ "response status is: 200"
+    console.log("status of getAllCards", status);
+
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.message;
+    } else {
+      return "An unexpected error occurred";
+    }
+  }
+};
+
+export const getUserCardCollection = async (
+  user_id: number
+): Promise<GameCardModel[] | string> => {
+  try {
+    // 👇️ const data: GetUsersResponse
+    const { data, status } = await axios.get<GameCardModel[]>(
+      `http://localhost:3001/user_collection/${user_id}`
+    );
+
+    // 👇️ "response status is: 200"
     console.log("response status is: ", status);
 
     return data;
@@ -25,29 +47,6 @@ export const getAllCards = async (): Promise<GameCardModel[] | string> => {
   }
 };
 
-// TODO: Need user id
-// export const getUserCardCollection = async (): Promise<GameCardModel[] | string> => {
-//   try {
-//     // 👇️ const data: GetUsersResponse
-//     const { data, status } = await axios.get<GameCardModel[]>(
-//       "http://localhost:3001/all-cards"
-//     );
-
-//     // 👇️ "response status is: 200"
-//     console.log("response status is: ", status);
-
-//     return data;
-//   } catch (error) {
-//     if (axios.isAxiosError(error)) {
-//       console.log("error message: ", error.message);
-//       return error.message;
-//     } else {
-//       console.log("unexpected error: ", error);
-//       return "An unexpected error occurred";
-//     }
-//   }
-// };
-
 export const getAllUsers = async (): Promise<User[] | string> => {
   try {
     // 👇️ const data: GetUsersResponse
@@ -56,15 +55,12 @@ export const getAllUsers = async (): Promise<User[] | string> => {
     );
 
     // 👇️ "response status is: 200"
-    console.log("response status is: ", status);
 
     return data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.log("error message: ", error.message);
       return error.message;
     } else {
-      console.log("unexpected error: ", error);
       return "An unexpected error occurred";
     }
   }
@@ -88,7 +84,7 @@ export const addNewUser = (user: User): void => {
 
 export const addNewCustomCard = (card: GameCardModel): void => {
   // two arguments: path and body
-  console.log("card value", card);
+
   axios
     .post("http://localhost:3001/custom-card", {
       name: card.name,

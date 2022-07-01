@@ -1,5 +1,5 @@
 export interface User {
-  user_id?: number;
+  user_id: number | null;
   name: string;
   username: string;
   password: string;
@@ -7,9 +7,10 @@ export interface User {
 }
 
 export interface GameCardModel {
+  card_id?: number;
   defense: number | string;
   flavor_text: string;
   name: string;
   attack: number | string;
-  rarity: string;
+  rarity: number;
 }
