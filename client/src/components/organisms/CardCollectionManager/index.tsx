@@ -8,6 +8,7 @@ interface Props {
   handleCollectionType: () => void;
   collectionType: boolean;
   collection: GameCardModel[];
+  toggleFiltersModal: () => void;
 }
 
 interface RarityCount {
@@ -27,6 +28,7 @@ const CardCollectionManager: React.FC<Props> = ({
   handleCollectionType,
   collectionType,
   collection,
+  toggleFiltersModal,
 }: Props) => {
   const sortedCollection: RarityCount = collection.reduce(
     (acc: IIndexable, current: GameCardModel) => {
@@ -70,7 +72,7 @@ const CardCollectionManager: React.FC<Props> = ({
       }}
     >
       <Container sx={ButtonContainerSx}>
-        <IconButton>
+        <IconButton onClick={toggleFiltersModal}>
           <MenuIcon sx={{ backgroundColor: "pink", fontSize: "40px" }} />
         </IconButton>
         <Typography fontSize="30px"> All Cards: {collection.length}</Typography>
@@ -101,7 +103,7 @@ const CardCollectionManager: React.FC<Props> = ({
       </Container>
       <Container sx={ButtonContainerSx}>
         <Button onClick={handleCollectionType} sx={{ color: "pink" }}>
-          {collectionType ? "Show All Cards" : "Show my collection"}
+          {collectionType ? "Show my collection" : "Show All Cards"}
         </Button>
       </Container>
     </Container>

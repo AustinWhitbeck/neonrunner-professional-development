@@ -52,17 +52,37 @@ app.get("/all-cards", (req, res) => {
   });
 });
 
-app.get("/user_collection/:id", (req, res) => {
-  console.log("request in user_collection", req);
-  const id = req.params.id;
-  console.log("id inside user_collecton", id);
-  db.query(`SELECT * FROM user_cards WHERE user_id=${id}`, (err, result) => {
+app.get("/all-cards/:filters", (req, res) => {
+  // const royal = req.params.filters.royal ? 1 : "";
+  db.query(`SELECT * FROM all_cards WHERE rarity IN (1, 2)`, (err, result) => {
     if (err) {
       console.log(err);
     } else {
       res.send(result);
     }
   });
+});
+
+// ** SPECIFIC USER ** //
+
+app.get("/user_collection/:id", (req, res) => {
+  console.log("request in user_collection", req);
+  const id = req.params.id;
+  console.log("id inside user_collecton", id);
+  db.query(
+    `SELECT *
+    FROM user_cards
+    INNER JOIN all_cards
+    ON user_cards.card_id = all_cards.card_id
+    WHERE user_id=${id};`,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
 });
 
 // *** POST REQUESTS *** //

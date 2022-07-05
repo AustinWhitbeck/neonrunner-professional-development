@@ -1,27 +1,13 @@
 import axios from "axios";
 import { GameCardModel, User } from "../models/models";
 
-// ** GET REQUESTS ** //
+interface BoolKey {
+  [key: string]: boolean;
+}
 
-export const getAllCards = async (): Promise<GameCardModel[] | string> => {
-  try {
-    // 👇️ const data: GetUsersResponse
-    const { data, status } = await axios.get<GameCardModel[]>(
-      "http://localhost:3001/all-cards"
-    );
+//// ** GET REQUESTS ** ////
 
-    // 👇️ "response status is: 200"
-    console.log("status of getAllCards", status);
-
-    return data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return error.message;
-    } else {
-      return "An unexpected error occurred";
-    }
-  }
-};
+// USER SPECIFIC GETS
 
 export const getUserCardCollection = async (
   user_id: number
@@ -47,14 +33,17 @@ export const getUserCardCollection = async (
   }
 };
 
-export const getAllUsers = async (): Promise<User[] | string> => {
+// ALL GETS
+
+export const getAllCards = async (): Promise<GameCardModel[] | string> => {
   try {
     // 👇️ const data: GetUsersResponse
-    const { data, status } = await axios.get<User[]>(
-      "http://localhost:3001/all-users"
+    const { data, status } = await axios.get<GameCardModel[]>(
+      "http://localhost:3001/all-cards"
     );
 
     // 👇️ "response status is: 200"
+    console.log("status of getAllCards", status);
 
     return data;
   } catch (error) {
@@ -66,7 +55,51 @@ export const getAllUsers = async (): Promise<User[] | string> => {
   }
 };
 
-// ** POST REQUESTS ** //
+export const getAllCardsWithFilters = async (
+  filters: BoolKey
+): Promise<GameCardModel[] | string> => {
+  try {
+    console.log("filters value");
+    console.log("filters value", filters);
+    // 👇️ const data: GetUsersResponse
+    const { data, status } = await axios.get<GameCardModel[]>(
+      `http://localhost:3001/all-cards/${filters}`
+    );
+
+    // 👇️ "response status is: 200"
+    console.log("status of getAllCardsWithFilters", status);
+
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.message;
+    } else {
+      return "An unexpected error occurred";
+    }
+  }
+};
+
+export const getAllUsers = async (): Promise<User[] | string> => {
+  try {
+    // 👇️ const data: GetUsersResponse
+    const { data, status } = await axios.get<User[]>(
+      "http://localhost:3001/all-users"
+    );
+
+    // 👇️ "response status is: 200"
+    console.log(`response status is: ${status}`);
+
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.message;
+    } else {
+      return "An unexpected error occurred";
+    }
+  }
+};
+
+//// ** POST REQUESTS ** ////
 
 export const addNewUser = (user: User): void => {
   // two arguments: path and body
