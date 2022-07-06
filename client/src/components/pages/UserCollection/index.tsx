@@ -6,6 +6,7 @@ import {
   getAllCardsSearchMatch,
   getAllCardsWithFilters,
   getUserCardCollection,
+  getUserCardCollectionSearchMatch,
 } from "../../../repository";
 import GameCard from "../../molecules/GameCard";
 import CardCollectionManager from "../../organisms/CardCollectionManager";
@@ -32,9 +33,21 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
 
   const handleNameSearch = async (text: string): Promise<void> => {
     console.log(`search name search ${text}`);
-    const fetchedCards = await getAllCardsSearchMatch(text);
+    let fetchedCards: string | GameCardModel[] = [];
+    if (collectionType) {
+      fetchedCards = await getAllCardsSearchMatch(text);
+    } else {
+      fetchedCards = await getUserCardCollectionSearchMatch(
+        currentUser.user_id as number,
+        text
+      );
+    }
     if (Array.isArray(fetchedCards)) {
-      setAllCards(fetchedCards);
+      if (collectionType) {
+        setAllCards(fetchedCards);
+      } else {
+        setUserCollection(fetchedCards);
+      }
     }
   };
 
@@ -112,9 +125,7 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
       >
         UserCollection
       </Typography>
-      <Box sx={{ width: "100%" }}>
-        {loading ? <LinearProgress variant="indeterminate" /> : ""}
-      </Box>
+
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <CardCollectionManager
           handleCollectionType={handleCollectionType}
@@ -127,6 +138,9 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
             handleSubmit={handleNameSearch}
             handleClear={handleGetAllCards}
           />
+          <Box marginTop="10px" sx={{ width: "100%" }}>
+            {loading ? <LinearProgress variant="indeterminate" /> : ""}
+          </Box>
           <Container
             sx={{
               padding: "20px",

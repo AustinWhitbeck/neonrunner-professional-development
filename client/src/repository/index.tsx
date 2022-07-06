@@ -33,6 +33,31 @@ export const getUserCardCollection = async (
   }
 };
 
+export const getUserCardCollectionSearchMatch = async (
+  user_id: number,
+  text: string
+): Promise<GameCardModel[] | string> => {
+  try {
+    // 👇️ const data: GetUsersResponse
+    const { data, status } = await axios.get<GameCardModel[]>(
+      `http://localhost:3001/user_collection/search-name/${user_id}/${text}`
+    );
+
+    // 👇️ "response status is: 200"
+    console.log("response status is: ", status);
+
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log("error message: ", error.message);
+      return error.message;
+    } else {
+      console.log("unexpected error: ", error);
+      return "An unexpected error occurred";
+    }
+  }
+};
+
 // ALL GETS
 
 export const getAllCards = async (): Promise<GameCardModel[] | string> => {

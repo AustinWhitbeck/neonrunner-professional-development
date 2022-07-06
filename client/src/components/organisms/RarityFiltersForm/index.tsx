@@ -34,12 +34,15 @@ const RarityFiltersForm: React.FC<Props> = ({
     <Modal
       open={filtersModalOpen}
       onClose={toggleFiltersModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
       sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
     >
       <Box
-        sx={{ backgroundColor: "red", padding: "20px", borderRadius: "5px" }}
+        sx={{
+          backgroundColor: "white",
+          border: "cyan solid 2px",
+          padding: "20px",
+          borderRadius: "5px",
+        }}
       >
         <FormControl component="fieldset" variant="standard">
           <FormLabel>Collection Filters</FormLabel>
@@ -87,8 +90,10 @@ const RarityFiltersForm: React.FC<Props> = ({
             />
           </FormGroup>
         </FormControl>
-        <Button onClick={handleFiltersSubmit}>Apply Filters</Button>
-        <Button onClick={handleGetAllCards}>Reset Filters</Button>
+        <Box>
+          <Button onClick={handleFiltersSubmit}>Apply Filters</Button>
+          <Button onClick={handleGetAllCards}>Reset Filters</Button>
+        </Box>
       </Box>
     </Modal>
   );

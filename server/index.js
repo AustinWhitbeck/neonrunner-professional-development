@@ -103,6 +103,30 @@ app.get("/user_collection/:id", (req, res) => {
   );
 });
 
+app.get("/user_collection/search-name/:id/:text", (req, res) => {
+  console.log("request in user_collection/search name", req.params);
+  const id = req.params.id;
+  const text = req.params.text;
+  console.log("text in name search", req.params.text);
+  db.query(
+    `SELECT *
+    FROM user_cards
+    INNER JOIN all_cards
+    ON user_cards.card_id = all_cards.card_id
+    WHERE user_id=${id}
+    LIKE '${req.params.text}%'
+    ORDER BY name ASC;`,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("result value", result);
+        res.send(result);
+      }
+    }
+  );
+});
+
 // *** POST REQUESTS *** //
 
 app.post("/create-user", (req, res) => {
