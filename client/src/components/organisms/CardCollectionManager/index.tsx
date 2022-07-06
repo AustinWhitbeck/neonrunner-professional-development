@@ -65,9 +65,9 @@ const CardCollectionManager: React.FC<Props> = ({
     <Container
       disableGutters
       sx={{
-        position: "absolute",
-        height: "100%",
+        height: "100vh",
         width: "150px",
+        margin: 0,
         backgroundColor: "#7C6C9E",
       }}
     >

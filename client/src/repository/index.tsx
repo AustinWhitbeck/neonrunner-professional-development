@@ -55,6 +55,28 @@ export const getAllCards = async (): Promise<GameCardModel[] | string> => {
   }
 };
 
+export const getAllCardsSearchMatch = async (
+  text: string
+): Promise<GameCardModel[] | string> => {
+  try {
+    // 👇️ const data: GetUsersResponse
+    const { data, status } = await axios.get<GameCardModel[]>(
+      `http://localhost:3001/all-cards/search-name/${text}`
+    );
+
+    // 👇️ "response status is: 200"
+    console.log(`response status is: ${status}`);
+
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.message;
+    } else {
+      return "An unexpected error occurred";
+    }
+  }
+};
+
 export const getAllCardsWithFilters = async (
   filters: BoolKey
 ): Promise<GameCardModel[] | string> => {

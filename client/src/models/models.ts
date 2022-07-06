@@ -14,3 +14,10 @@ export interface GameCardModel {
   attack: number | string;
   rarity: number;
 }
+
+export interface RarityFilter {
+  royal: boolean;
+  noble: boolean;
+  artisan: boolean;
+  peasant: boolean;
+}

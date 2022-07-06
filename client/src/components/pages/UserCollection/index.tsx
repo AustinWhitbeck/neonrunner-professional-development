@@ -1,25 +1,16 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  Container,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  FormLabel,
-  LinearProgress,
-  Modal,
-  Typography,
-} from "@mui/material";
+import { Box, Container, LinearProgress, Typography } from "@mui/material";
 import React, { ReactNode, useEffect, useState } from "react";
 import { GameCardModel, User } from "../../../models/models";
 import {
   getAllCards,
+  getAllCardsSearchMatch,
   getAllCardsWithFilters,
   getUserCardCollection,
 } from "../../../repository";
 import GameCard from "../../molecules/GameCard";
 import CardCollectionManager from "../../organisms/CardCollectionManager";
+import RarityFiltersForm from "../../organisms/RarityFiltersForm";
+import SearchBar from "../../organisms/SearchBar";
 
 interface Props {
   currentUser: User;
@@ -39,7 +30,13 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
     peasant: false,
   });
 
-  const { royal, noble, artisan, peasant } = filterValues;
+  const handleNameSearch = async (text: string): Promise<void> => {
+    console.log(`search name search ${text}`);
+    const fetchedCards = await getAllCardsSearchMatch(text);
+    if (Array.isArray(fetchedCards)) {
+      setAllCards(fetchedCards);
+    }
+  };
 
   const handleGetAllCards = async (): Promise<void> => {
     const fetchedCards = await getAllCards();
@@ -87,7 +84,9 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
     });
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleModalChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     setFilterValues({
       ...filterValues,
       [event.target.name]: event.target.checked,
@@ -100,7 +99,7 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
   }, []);
 
   return (
-    <div>
+    <>
       <Typography
         variant="h3"
         sx={{
@@ -113,90 +112,45 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
       >
         UserCollection
       </Typography>
-      <CardCollectionManager
-        handleCollectionType={handleCollectionType}
-        toggleFiltersModal={toggleFiltersModal}
-        collectionType={collectionType}
-        collection={collectionType ? allCards : userCollection}
-      />
       <Box sx={{ width: "100%" }}>
         {loading ? <LinearProgress variant="indeterminate" /> : ""}
       </Box>
-      <Container
-        sx={{
-          padding: "20px",
-          marginLeft: "150px",
-          display: loading ? "none" : "flex",
-          flexWrap: "wrap",
-        }}
-      >
-        {(collectionType ? allCards : userCollection).map(
-          (card): ReactNode => (
-            <GameCard card={card} key={card.card_id} />
-          )
-        )}
-      </Container>
-      <Modal
-        open={filtersModalOpen}
-        onClose={toggleFiltersModal}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-      >
-        <Box
-          sx={{ backgroundColor: "red", padding: "20px", borderRadius: "5px" }}
-        >
-          <FormControl component="fieldset" variant="standard">
-            <FormLabel>Collection Filters</FormLabel>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={royal}
-                    onChange={handleChange}
-                    name="royal"
-                    value={1}
-                  />
-                }
-                label="Royal"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={noble}
-                    onChange={handleChange}
-                    name="noble"
-                  />
-                }
-                label="Noble"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={artisan}
-                    onChange={handleChange}
-                    name="artisan"
-                  />
-                }
-                label="Artisan"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={peasant}
-                    onChange={handleChange}
-                    name="peasant"
-                  />
-                }
-                label="Peasant"
-              />
-            </FormGroup>
-          </FormControl>
-          <Button onClick={handleFiltersSubmit}>Apply Filters</Button>
-          <Button onClick={handleGetAllCards}>Reset Filters</Button>
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <CardCollectionManager
+          handleCollectionType={handleCollectionType}
+          toggleFiltersModal={toggleFiltersModal}
+          collectionType={collectionType}
+          collection={collectionType ? allCards : userCollection}
+        />
+        <Box width="100%" padding="10px">
+          <SearchBar
+            handleSubmit={handleNameSearch}
+            handleClear={handleGetAllCards}
+          />
+          <Container
+            sx={{
+              padding: "20px",
+              display: loading ? "none" : "flex",
+              flexWrap: "wrap",
+            }}
+          >
+            {(collectionType ? allCards : userCollection).map(
+              (card): ReactNode => (
+                <GameCard card={card} key={card.card_id} />
+              )
+            )}
+          </Container>
         </Box>
-      </Modal>
-    </div>
+        <RarityFiltersForm
+          filtersModalOpen={filtersModalOpen}
+          filterValues={filterValues}
+          toggleFiltersModal={toggleFiltersModal}
+          handleModalChange={handleModalChange}
+          handleFiltersSubmit={handleFiltersSubmit}
+          handleGetAllCards={handleGetAllCards}
+        />
+      </Box>
+    </>
   );
 };
 

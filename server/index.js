@@ -43,7 +43,7 @@ app.get("/all-users", (req, res) => {
 });
 
 app.get("/all-cards", (req, res) => {
-  db.query("SELECT * FROM all_cards", (err, result) => {
+  db.query("SELECT * FROM all_cards ORDER BY name ASC", (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -55,7 +55,21 @@ app.get("/all-cards", (req, res) => {
 app.get("/all-cards/:filters", (req, res) => {
   console.log("req in filtered cards", req.params.filters);
   db.query(
-    `SELECT * FROM all_cards WHERE rarity IN (${req.params.filters})`,
+    `SELECT * FROM all_cards WHERE rarity IN (${req.params.filters}) ORDER BY name ASC`,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+});
+
+app.get("/all-cards/search-name/:name", (req, res) => {
+  console.log("req in searchbar by name", req.params.name);
+  db.query(
+    `SELECT * FROM all_cards WHERE name LIKE '${req.params.name}%' ORDER BY name ASC`,
     (err, result) => {
       if (err) {
         console.log(err);
@@ -77,7 +91,8 @@ app.get("/user_collection/:id", (req, res) => {
     FROM user_cards
     INNER JOIN all_cards
     ON user_cards.card_id = all_cards.card_id
-    WHERE user_id=${id};`,
+    WHERE user_id=${id}
+    ORDER BY name ASC;`,
     (err, result) => {
       if (err) {
         console.log(err);
