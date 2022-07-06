@@ -59,11 +59,35 @@ export const getAllCardsWithFilters = async (
   filters: BoolKey
 ): Promise<GameCardModel[] | string> => {
   try {
-    console.log("filters value");
     console.log("filters value", filters);
+    const rarityValuesArray: number[] = [];
+    Object.keys(filters).forEach((filter) => {
+      console.log("filters in forEach", filters[filter]);
+      if (filters[filter]) {
+        let numRarity = 0;
+        switch (filter) {
+          case "royal":
+            numRarity = 1;
+            break;
+          case "noble":
+            numRarity = 2;
+            break;
+          case "artisan":
+            numRarity = 3;
+            break;
+          case "peasant":
+            numRarity = 4;
+            break;
+          default:
+            break;
+        }
+        rarityValuesArray.push(numRarity);
+        console.log("rarityValuesArray", rarityValuesArray);
+      }
+    });
     // 👇️ const data: GetUsersResponse
     const { data, status } = await axios.get<GameCardModel[]>(
-      `http://localhost:3001/all-cards/${filters}`
+      `http://localhost:3001/all-cards/${rarityValuesArray}`
     );
 
     // 👇️ "response status is: 200"

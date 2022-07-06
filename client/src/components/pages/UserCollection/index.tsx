@@ -28,6 +28,7 @@ interface Props {
 const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
   const [allCards, setAllCards] = useState<GameCardModel[]>([]);
   const [userCollection, setUserCollection] = useState<GameCardModel[]>([]);
+
   const [collectionType, setCollectionType] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
   const [filtersModalOpen, setFiltersModalOpen] = useState<boolean>(false);
@@ -45,7 +46,7 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
     if (Array.isArray(fetchedCards)) {
       setAllCards(fetchedCards);
     }
-    toggleFiltersModal();
+    setFiltersModalOpen(false);
     setLoading(false);
   };
 
@@ -82,7 +83,7 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
     getAllCardsWithFilters(filterValues).then((data) => {
       console.log("data value", data);
       setAllCards(data as GameCardModel[]);
-      toggleFiltersModal();
+      setFiltersModalOpen(false);
     });
   };
 

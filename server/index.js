@@ -53,14 +53,17 @@ app.get("/all-cards", (req, res) => {
 });
 
 app.get("/all-cards/:filters", (req, res) => {
-  // const royal = req.params.filters.royal ? 1 : "";
-  db.query(`SELECT * FROM all_cards WHERE rarity IN (1, 2)`, (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
+  console.log("req in filtered cards", req.params.filters);
+  db.query(
+    `SELECT * FROM all_cards WHERE rarity IN (${req.params.filters})`,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
     }
-  });
+  );
 });
 
 // ** SPECIFIC USER ** //

@@ -13,19 +13,38 @@ import React, { useState } from "react";
 import { addNewCustomCard } from "../../../repository";
 import GameCard from "../../molecules/GameCard";
 
+interface CustomCardForm {
+  name: string;
+  attack: number;
+  defense: number;
+  flavor_text: string;
+  rarity: number;
+}
+
 const CustomCardCreation: React.FC = () => {
-  const [name, setName] = useState<string>("Card Name");
-  const [attack, setAttack] = useState<number>(1);
-  const [defense, setDefense] = useState<number>(1);
-  const [flavor, setFlavor] = useState<string>("Flavor Text");
-  const [rarity, setRarity] = useState<number>(1);
+  const [formValues, setFormValues] = useState<CustomCardForm>({
+    name: "",
+    attack: 0,
+    defense: 0,
+    flavor_text: "",
+    rarity: 1,
+  });
+
+  const { name, attack, defense, flavor_text, rarity } = formValues;
 
   const inputSx = {
     margin: "0 15px 15px 0",
   };
 
   const handleSubmit = (): void => {
-    addNewCustomCard({ name, attack, defense, flavor_text: flavor, rarity });
+    addNewCustomCard({ name, attack, defense, flavor_text, rarity });
+    setFormValues({
+      name: "",
+      attack: 0,
+      defense: 0,
+      flavor_text: "",
+      rarity: 1,
+    });
   };
 
   return (
@@ -42,15 +61,19 @@ const CustomCardCreation: React.FC = () => {
             label="Name"
             value={name}
             onChange={(e): void => {
-              setName(e.target.value);
+              const newValues = { ...formValues };
+              newValues.name = e.target.value;
+              setFormValues(newValues);
             }}
             sx={inputSx}
           />
           <TextField
             label="Flavor"
-            value={flavor}
+            value={flavor_text}
             onChange={(e): void => {
-              setFlavor(e.target.value);
+              const newValues = { ...formValues };
+              newValues.flavor_text = e.target.value;
+              setFormValues(newValues);
             }}
             sx={inputSx}
           />
@@ -59,7 +82,9 @@ const CustomCardCreation: React.FC = () => {
             label="Attack"
             value={attack}
             onChange={(e): void => {
-              setAttack(parseInt(e.target.value));
+              const newValues = { ...formValues };
+              newValues.attack = parseInt(e.target.value);
+              setFormValues(newValues);
             }}
             sx={inputSx}
           />
@@ -68,7 +93,9 @@ const CustomCardCreation: React.FC = () => {
             label="Defense"
             value={defense}
             onChange={(e): void => {
-              setDefense(parseInt(e.target.value));
+              const newValues = { ...formValues };
+              newValues.defense = parseInt(e.target.value);
+              setFormValues(newValues);
             }}
             sx={inputSx}
           />
@@ -80,7 +107,9 @@ const CustomCardCreation: React.FC = () => {
               defaultValue="royal"
               label="Rarity"
               onChange={(e): void => {
-                setRarity(parseInt(e.target.value));
+                const newValues = { ...formValues };
+                newValues.rarity = parseInt(e.target.value);
+                setFormValues(newValues);
               }}
             >
               <MenuItem value={1}>Royal</MenuItem>
@@ -94,9 +123,7 @@ const CustomCardCreation: React.FC = () => {
           disableGutters
           sx={{ width: "100%", display: "flex", justifyContent: "center" }}
         >
-          <GameCard
-            card={{ name, attack, defense, flavor_text: flavor, rarity }}
-          />
+          <GameCard card={{ name, attack, defense, flavor_text, rarity }} />
         </Container>
       </Container>
       <Button size="large" onClick={handleSubmit}>
