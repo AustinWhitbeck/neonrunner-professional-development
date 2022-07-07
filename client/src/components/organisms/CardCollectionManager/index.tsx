@@ -1,6 +1,11 @@
 import { Button, Container, IconButton, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { GiMaterialsScience } from "react-icons/gi";
+import {
+  Gi3DMeeple,
+  GiCrenelCrown,
+  GiAbbotMeeple,
+  GiFlatHammer,
+} from "react-icons/gi";
 import React from "react";
 import { GameCardModel } from "../../../models/models";
 
@@ -75,29 +80,33 @@ const CardCollectionManager: React.FC<Props> = ({
         <IconButton onClick={toggleFiltersModal}>
           <MenuIcon sx={{ backgroundColor: "pink", fontSize: "40px" }} />
         </IconButton>
-        <Typography fontSize="30px"> All Cards: {collection.length}</Typography>
+      </Container>
+      <Container sx={ButtonContainerSx}>
+        <Typography fontSize="20px">
+          Total Cards: {collection.length}
+        </Typography>
       </Container>
       <Container sx={ButtonContainerSx}>
         <IconButton>
-          <GiMaterialsScience color="white" size="30px" />
+          <GiCrenelCrown color="white" size="30px" />
         </IconButton>
         <Typography fontSize="30px">{sortedCollection.royal}</Typography>
       </Container>
       <Container sx={ButtonContainerSx}>
         <IconButton>
-          <GiMaterialsScience color="white" size="30px" />
+          <GiAbbotMeeple color="white" size="30px" />
         </IconButton>
         <Typography fontSize="30px"> {sortedCollection.noble}</Typography>
       </Container>
       <Container sx={ButtonContainerSx}>
         <IconButton>
-          <GiMaterialsScience color="white" size="30px" />
+          <GiFlatHammer color="white" size="30px" />
         </IconButton>
         <Typography fontSize="30px"> {sortedCollection.artisan}</Typography>
       </Container>
       <Container sx={ButtonContainerSx}>
         <IconButton>
-          <GiMaterialsScience color="white" size="30px" />
+          <Gi3DMeeple color="white" size="30px" />
         </IconButton>
         <Typography fontSize="30px"> {sortedCollection.peasant}</Typography>
       </Container>

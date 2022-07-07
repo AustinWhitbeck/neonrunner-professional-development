@@ -23,10 +23,7 @@ const SearchBar: React.FC<Props> = ({ handleSubmit, handleClear }: Props) => {
         value={searchText}
         onChange={(e): void => setSearchText(e.target.value)}
       ></TextField>
-      <IconButton
-        onClick={handleClearSearch}
-        sx={{ display: searchText !== "" ? "" : "none" }}
-      >
+      <IconButton onClick={handleClearSearch}>
         <AiOutlineClose />
       </IconButton>
       <IconButton onClick={(): void => handleSubmit(searchText)}>

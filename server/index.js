@@ -92,8 +92,9 @@ app.get("/all-cards/:filters", (req, res) => {
 
 app.get("/all-cards/search-name/:name", (req, res) => {
   console.log("req in searchbar by name", req.params.name);
+  const name = req.params.name;
   db.query(
-    `SELECT * FROM all_cards WHERE name LIKE '${req.params.name}%' ORDER BY name ASC`,
+    `SELECT * FROM all_cards WHERE name LIKE '%${name}%' ORDER BY name ASC`,
     (err, result) => {
       if (err) {
         console.log(err);
@@ -138,7 +139,7 @@ app.get("/user_collection/search-name/:id/:text", (req, res) => {
     INNER JOIN all_cards
     ON user_cards.card_id = all_cards.card_id
     WHERE user_id=${id}
-    LIKE '${req.params.text}%'
+    AND name LIKE '%${text}%'
     ORDER BY name ASC;`,
     (err, result) => {
       if (err) {

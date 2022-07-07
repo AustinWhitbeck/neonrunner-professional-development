@@ -51,6 +51,22 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
     }
   };
 
+  const handleNameSearchClear = async (): Promise<void> => {
+    let fetchedCards: string | GameCardModel[] = [];
+    if (collectionType) {
+      fetchedCards = await getAllCards();
+    } else {
+      fetchedCards = await getUserCardCollection(currentUser.user_id as number);
+    }
+    if (Array.isArray(fetchedCards)) {
+      if (collectionType) {
+        setAllCards(fetchedCards);
+      } else {
+        setUserCollection(fetchedCards);
+      }
+    }
+  };
+
   const handleGetAllCards = async (): Promise<void> => {
     const fetchedCards = await getAllCards();
     if (Array.isArray(fetchedCards)) {
@@ -103,6 +119,16 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
     setFilterValues({
       ...filterValues,
       [event.target.name]: event.target.checked,
+    });
+  };
+
+  const handleResetRarityFilters = (): void => {
+    handleGetAllCards();
+    setFilterValues({
+      royal: false,
+      noble: false,
+      artisan: false,
+      peasant: false,
     });
   };
 
@@ -161,7 +187,7 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
           toggleFiltersModal={toggleFiltersModal}
           handleModalChange={handleModalChange}
           handleFiltersSubmit={handleFiltersSubmit}
-          handleGetAllCards={handleGetAllCards}
+          handleResetRarityFilters={handleResetRarityFilters}
         />
       </Box>
     </>

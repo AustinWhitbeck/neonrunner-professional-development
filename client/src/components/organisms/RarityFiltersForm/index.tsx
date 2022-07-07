@@ -17,7 +17,7 @@ interface Props {
   filtersModalOpen: boolean;
   handleModalChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleFiltersSubmit: () => void;
-  handleGetAllCards: () => void;
+  handleResetRarityFilters: () => void;
 }
 
 const RarityFiltersForm: React.FC<Props> = ({
@@ -26,7 +26,7 @@ const RarityFiltersForm: React.FC<Props> = ({
   filtersModalOpen,
   handleModalChange,
   handleFiltersSubmit,
-  handleGetAllCards,
+  handleResetRarityFilters,
 }: Props) => {
   const { royal, noble, artisan, peasant } = filterValues;
 
@@ -92,7 +92,7 @@ const RarityFiltersForm: React.FC<Props> = ({
         </FormControl>
         <Box>
           <Button onClick={handleFiltersSubmit}>Apply Filters</Button>
-          <Button onClick={handleGetAllCards}>Reset Filters</Button>
+          <Button onClick={handleResetRarityFilters}>Reset Filters</Button>
         </Box>
       </Box>
     </Modal>
