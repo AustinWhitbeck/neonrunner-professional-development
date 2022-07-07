@@ -52,7 +52,10 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
+    "bcrypt": "^5.0.1",
     "eslint": "^8.18.0",
+    "i": "^0.3.7",
+    "npm": "^8.13.2",
     "typescript": "^4.7.4"
   }
 }

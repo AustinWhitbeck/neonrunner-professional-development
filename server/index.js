@@ -1,6 +1,13 @@
+// TODO: Unsure if needed? Loads in all dependencies if not in prodution aka in dev?
+// if (process.env.NODE_ENV !== "production") {
+//   require("dotenv").config();
+// }
 const express = require("express");
-const passport = require("passport");
+// const passport = require("passport");
 const dotenv = require("dotenv");
+const bcrypt = require("bcrypt");
+// const flash = require("express-flash");
+// const session = require("express-session");
 
 dotenv.config();
 
@@ -9,13 +16,33 @@ const port = process.env.EXPRESS_PORT;
 const mysql = require("mysql");
 const cors = require("cors");
 
+// const initializePassport = require("./passport-config");
+// initializePassport(
+//   passport,
+//   (username) => users.find((user) => user.username === username),
+//   (id) => users.find((user) => user.user_id === id)
+// );
+
 app.use(cors());
 // needs to be changed into json when coming from express
 app.use(express.json());
 
+// setup for passport
+// set up a session so that it persists locally.
+// app.use(flash());
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//   })
+// );
+// // initialize passport and start a session
+// app.use(passport.initialize());
+// app.use(passport.session());
+
 const db = mysql.createConnection({
   user: "root",
-  // port: process.env.DB_PORT,
   host: "localhost",
   password: "password",
   database: "neonrunner_db",
@@ -23,9 +50,6 @@ const db = mysql.createConnection({
 });
 
 db.connect();
-
-// // PASSPORT SETUP
-// app.use();
 
 // res = what the front and will show (sent to front end)
 // req = front end requesting something from the backend
@@ -129,29 +153,47 @@ app.get("/user_collection/search-name/:id/:text", (req, res) => {
 
 // *** POST REQUESTS *** //
 
-app.post("/create-user", (req, res) => {
-  const name = req.body.name;
-  const username = req.body.username;
-  const password = req.body.password;
-  const avatar = req.body.avatar;
+app.post("/create-user", async (req, res) => {
+  // ** Notes on hashing ** //
+  // second arg of hash() is how many times the password is hashed.
+  // 10 is standard, fast but secure.
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    console.log(
+      "🚀 ~ file: index.js ~ line 139 ~ app.post ~ hashedPassword",
+      hashedPassword
+    );
 
-  // call the db variable to start an SQL statement
-  // when putting the values, for security, pass questions marks and then an array (in the same order) with the variables we are using
-  // as declared above
-
-  db.query(
-    "INSERT INTO users (name, username, password, avatar) VALUES (?,?,?,?)",
-    [name, username, password, avatar],
-    (err, result) => {
-      if (err) {
-        console.log("error value", err);
-      } else {
-        console.log("sent the values correctly");
+    // call the db variable to start an SQL statement
+    // when putting the values, for security, pass questions marks and then an array (in the same order) with the variables we are using
+    // as declared above
+    db.query(
+      "INSERT INTO users (name, username, password, avatar) VALUES (?,?,?,?)",
+      [req.body.name, req.body.username, hashedPassword, req.body.avatar],
+      (err, result) => {
+        if (err) {
+          console.log("error value", err);
+        } else {
+          console.log("sent the values correctly");
+        }
+        res.send("Values Inserted to users table");
       }
-      res.send("Values Inserted to users table");
-    }
-  );
+    );
+  } catch {
+    console.log("catch in create-user");
+    res.redirect("/login");
+  }
 });
+
+// TODO: passport
+// app.post(
+//   `/login`,
+//   passport.authenticate("local", {
+//     successRedirect: "/collection",
+//     failureRedirect: "/login",
+//     failureFlash: true,
+//   })
+// );
 
 app.post("/custom-card", (req, res) => {
   const name = req.body.name;
