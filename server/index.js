@@ -1,43 +1,24 @@
-// TODO: Unsure if needed? Loads in all dependencies if not in prodution aka in dev?
-// if (process.env.NODE_ENV !== "production") {
-//   require("dotenv").config();
-// }
 const express = require("express");
-// const passport = require("passport");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
-// const flash = require("express-flash");
-// const session = require("express-session");
+const mysql = require("mysql");
+const cors = require("cors");
 
+// PASSPORT SETUP
+// const passport = require("passport");
+// const local = require("./strategies/local");
+// const authRoute = require("./auth");
+// const session = require("express-session");
 dotenv.config();
 
 const app = express();
 const port = process.env.EXPRESS_PORT;
-const mysql = require("mysql");
-const cors = require("cors");
-
-// const initializePassport = require("./passport-config");
-// initializePassport(
-//   passport,
-//   (username) => users.find((user) => user.username === username),
-//   (id) => users.find((user) => user.user_id === id)
-// );
 
 app.use(cors());
 // needs to be changed into json when coming from express
 app.use(express.json());
 
-// setup for passport
-// set up a session so that it persists locally.
-// app.use(flash());
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: false,
-//   })
-// );
-// // initialize passport and start a session
+// PASSPORT SETUP
 // app.use(passport.initialize());
 // app.use(passport.session());
 
@@ -53,6 +34,10 @@ db.connect();
 
 // res = what the front and will show (sent to front end)
 // req = front end requesting something from the backend
+
+// PASSPORT SETUP
+
+// app.use("/auth", authRoute);
 
 // *** GET REQUESTS *** //
 
@@ -91,7 +76,6 @@ app.get("/all-cards/:filters", (req, res) => {
 });
 
 app.get("/all-cards/search-name/:name", (req, res) => {
-  console.log("req in searchbar by name", req.params.name);
   const name = req.params.name;
   db.query(
     `SELECT * FROM all_cards WHERE name LIKE '%${name}%' ORDER BY name ASC`,
@@ -105,12 +89,34 @@ app.get("/all-cards/search-name/:name", (req, res) => {
   );
 });
 
+app.get("/all-cards-filter", (req, res) => {
+  // -- query values -- //
+  const rarities = req.query.rarities;
+  const nameSearch =
+    req.query.namesearch === "undefined" ? "" : req.query.namesearch;
+
+  // -- sql statement variables -- //
+  const select = `SELECT * FROM all_cards `;
+  const raritySQL = `WHERE rarity IN (${rarities}) `;
+  const nameSearchSQL =
+    nameSearch !== undefined ? `AND name LIKE '%${nameSearch}%'` : "";
+
+  db.query(
+    `${select}${raritySQL}${nameSearchSQL} ORDER BY name ASC`,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+});
+
 // ** SPECIFIC USER ** //
 
 app.get("/user_collection/:id", (req, res) => {
-  console.log("request in user_collection", req);
   const id = req.params.id;
-  console.log("id inside user_collecton", id);
   db.query(
     `SELECT *
     FROM user_cards
@@ -128,11 +134,30 @@ app.get("/user_collection/:id", (req, res) => {
   );
 });
 
+app.get("/user_collection/rarity-filter/:id/:filters", (req, res) => {
+  const filters = req.params.filters;
+  const id = req.params.id;
+  db.query(
+    `SELECT *
+    FROM user_cards
+    INNER JOIN all_cards
+    ON user_cards.card_id = all_cards.card_id
+    WHERE user_id=${id}
+    AND rarity IN (${filters})
+    ORDER BY name ASC;`,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+});
+
 app.get("/user_collection/search-name/:id/:text", (req, res) => {
-  console.log("request in user_collection/search name", req.params);
   const id = req.params.id;
   const text = req.params.text;
-  console.log("text in name search", req.params.text);
   db.query(
     `SELECT *
     FROM user_cards
@@ -140,6 +165,44 @@ app.get("/user_collection/search-name/:id/:text", (req, res) => {
     ON user_cards.card_id = all_cards.card_id
     WHERE user_id=${id}
     AND name LIKE '%${text}%'
+    ORDER BY name ASC;`,
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+});
+
+app.get("/user-cards-filter", (req, res) => {
+  // `http://localhost:3001/user-cards-filter?rarities=${filters.rarityValues}&namesearch=${filters.nameSearch}&userid=${filters.user_id}`
+  console.log("inside get of user_cards_filter");
+  console.log(
+    "request in user-cards-filter route, all this users cards",
+    req.query
+  );
+
+  // -- query values -- //
+  const id = req.query.userid;
+  const rarities = req.query.rarities;
+  const nameSearch =
+    req.query.namesearch === "undefined" ? "" : req.query.namesearch;
+
+  // -- sql statement variables -- //
+  const nameSearchSQL =
+    nameSearch !== undefined ? `AND name LIKE '%${nameSearch}%'` : "";
+  console.log("nameSearchSQl value", nameSearchSQL);
+
+  db.query(
+    `SELECT *
+    FROM user_cards
+    INNER JOIN all_cards
+    ON user_cards.card_id = all_cards.card_id
+    WHERE user_id=${id}
+    AND rarity IN (${rarities})
+    ${nameSearchSQL}
     ORDER BY name ASC;`,
     (err, result) => {
       if (err) {
@@ -160,10 +223,6 @@ app.post("/create-user", async (req, res) => {
   // 10 is standard, fast but secure.
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    console.log(
-      "🚀 ~ file: index.js ~ line 139 ~ app.post ~ hashedPassword",
-      hashedPassword
-    );
 
     // call the db variable to start an SQL statement
     // when putting the values, for security, pass questions marks and then an array (in the same order) with the variables we are using
@@ -185,16 +244,6 @@ app.post("/create-user", async (req, res) => {
     res.redirect("/login");
   }
 });
-
-// TODO: passport
-// app.post(
-//   `/login`,
-//   passport.authenticate("local", {
-//     successRedirect: "/collection",
-//     failureRedirect: "/login",
-//     failureFlash: true,
-//   })
-// );
 
 app.post("/custom-card", (req, res) => {
   const name = req.body.name;

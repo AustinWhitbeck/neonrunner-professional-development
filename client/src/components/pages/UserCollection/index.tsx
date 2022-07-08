@@ -1,12 +1,22 @@
-import { Box, Container, LinearProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  LinearProgress,
+  Typography,
+} from "@mui/material";
 import React, { ReactNode, useEffect, useState } from "react";
-import { GameCardModel, User } from "../../../models/models";
+import { cardRaritySort } from "../../../helpers/cardRaritySort";
+import { FormattedFilters, GameCardModel, User } from "../../../models/models";
 import {
   getAllCards,
   getAllCardsSearchMatch,
   getAllCardsWithFilters,
+  getAllCardsWithFilters2,
   getUserCardCollection,
   getUserCardCollectionSearchMatch,
+  getUserCardCollectionWithFilters,
+  getUserCardCollectionWithFilters2,
 } from "../../../repository";
 import GameCard from "../../molecules/GameCard";
 import CardCollectionManager from "../../organisms/CardCollectionManager";
@@ -24,12 +34,15 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
   const [collectionType, setCollectionType] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
   const [filtersModalOpen, setFiltersModalOpen] = useState<boolean>(false);
-  const [filterValues, setFilterValues] = React.useState({
+  const [rarityFilters, setRarityFilters] = React.useState({
     royal: false,
     noble: false,
     artisan: false,
     peasant: false,
   });
+
+  // TODO: experimental for building sql statement
+  const [nameSearch, setNameSearch] = useState<string>("");
 
   const handleNameSearch = async (text: string): Promise<void> => {
     console.log(`search name search ${text}`);
@@ -79,11 +92,9 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
   const handleGetUserCollection = async (): Promise<void> => {
     if (currentUser.user_id) {
       setLoading(true);
-      console.log("inside if statement");
       const fetchedUserCards = await getUserCardCollection(currentUser.user_id);
       if (Array.isArray(fetchedUserCards)) {
         setUserCollection(fetchedUserCards);
-        console.log("fetchedUserCards value", fetchedUserCards);
       }
     }
     setLoading(false);
@@ -97,6 +108,12 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
     } else {
       handleGetUserCollection();
     }
+    setRarityFilters({
+      royal: false,
+      noble: false,
+      artisan: false,
+      peasant: false,
+    });
   };
 
   const toggleFiltersModal = (): void => {
@@ -104,32 +121,85 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
   };
 
   const handleFiltersSubmit = (): void => {
-    console.log("handle filters submit");
-    console.log("filterValues value on userCollection", filterValues);
-    getAllCardsWithFilters(filterValues).then((data) => {
-      console.log("data value", data);
-      setAllCards(data as GameCardModel[]);
-      setFiltersModalOpen(false);
-    });
+    if (collectionType) {
+      getAllCardsWithFilters(rarityFilters).then((data) => {
+        setAllCards(data as GameCardModel[]);
+        setFiltersModalOpen(false);
+      });
+    } else {
+      getUserCardCollectionWithFilters2({
+        id: currentUser.user_id as number,
+        rarityValues: cardRaritySort(rarityFilters),
+      }).then((data) => {
+        setUserCollection(data as GameCardModel[]);
+        setFiltersModalOpen(false);
+      });
+    }
+  };
+
+  // Name Search functions
+
+  const handleSearchTextChange = (text: string): void => {
+    setNameSearch(text);
+  };
+
+  const handleAllFiltersSubmit = (): void => {
+    const formattedFilters: FormattedFilters = {
+      rarityValues: [1, 2, 3, 4],
+    };
+    const rarityValues = cardRaritySort(rarityFilters);
+    if (rarityValues.length) {
+      formattedFilters.rarityValues = rarityValues;
+    }
+    if (nameSearch) {
+      formattedFilters.nameSearch = nameSearch;
+    }
+    if (collectionType) {
+      getAllCardsWithFilters2(formattedFilters).then((data) => {
+        console.log("data value", data);
+        setAllCards(data as GameCardModel[]);
+        setFiltersModalOpen(false);
+      });
+    } else {
+      formattedFilters.id = currentUser.user_id as number;
+      getUserCardCollectionWithFilters2(formattedFilters).then((data) => {
+        console.log("data value", data);
+        setUserCollection(data as GameCardModel[]);
+        setFiltersModalOpen(false);
+      });
+    }
   };
 
   const handleModalChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
-    setFilterValues({
-      ...filterValues,
+    setRarityFilters({
+      ...rarityFilters,
       [event.target.name]: event.target.checked,
     });
   };
 
-  const handleResetRarityFilters = (): void => {
-    handleGetAllCards();
-    setFilterValues({
+  const handleResetRarityFilters = async (): Promise<void> => {
+    let fetchedCards: string | GameCardModel[] = [];
+    if (collectionType) {
+      fetchedCards = await getAllCards();
+    } else {
+      fetchedCards = await getUserCardCollection(currentUser.user_id as number);
+    }
+    if (Array.isArray(fetchedCards)) {
+      if (collectionType) {
+        setAllCards(fetchedCards);
+      } else {
+        setUserCollection(fetchedCards);
+      }
+    }
+    setRarityFilters({
       royal: false,
       noble: false,
       artisan: false,
       peasant: false,
     });
+    toggleFiltersModal();
   };
 
   useEffect(() => {
@@ -160,10 +230,15 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
           collection={collectionType ? allCards : userCollection}
         />
         <Box width="100%" padding="10px">
-          <SearchBar
-            handleSubmit={handleNameSearch}
-            handleClear={handleGetAllCards}
-          />
+          <Box>
+            <SearchBar
+              handleSubmit={handleAllFiltersSubmit}
+              handleClear={handleNameSearchClear}
+              nameSearch={nameSearch}
+              setSearchText={handleSearchTextChange}
+            />
+            <Button onClick={handleAllFiltersSubmit}>All Filter Search</Button>
+          </Box>
           <Box marginTop="10px" sx={{ width: "100%" }}>
             {loading ? <LinearProgress variant="indeterminate" /> : ""}
           </Box>
@@ -183,7 +258,7 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
         </Box>
         <RarityFiltersForm
           filtersModalOpen={filtersModalOpen}
-          filterValues={filterValues}
+          filterValues={rarityFilters}
           toggleFiltersModal={toggleFiltersModal}
           handleModalChange={handleModalChange}
           handleFiltersSubmit={handleFiltersSubmit}

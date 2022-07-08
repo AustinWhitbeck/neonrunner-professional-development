@@ -1,27 +1,36 @@
+import React from "react";
+
 import { Card, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import VideogameAssetOffIcon from "@mui/icons-material/VideogameAssetOff";
-import React from "react";
 import { GameCardModel } from "../../../models/models";
+import {
+  Gi3DMeeple,
+  GiCrenelCrown,
+  GiAbbotMeeple,
+  GiFlatHammer,
+} from "react-icons/gi";
 
 interface FullCard {
   card: GameCardModel;
 }
 
 const GameCard: React.FC<FullCard> = ({ card }: FullCard) => {
-  let strRarity = "";
+  const rarityColor = "#FF0099";
+  const raritySize = "30px";
+  let strRarity = <GiCrenelCrown />;
   switch (card.rarity) {
     case 1:
-      strRarity = "Royal";
+      strRarity = <GiCrenelCrown color={rarityColor} size={raritySize} />;
       break;
     case 2:
-      strRarity = "Noble";
+      strRarity = <GiAbbotMeeple color={rarityColor} size={raritySize} />;
       break;
     case 3:
-      strRarity = "Artisan";
+      strRarity = <GiFlatHammer color={rarityColor} size={raritySize} />;
       break;
     case 4:
-      strRarity = "Peasant";
+      strRarity = <Gi3DMeeple color={rarityColor} size={raritySize} />;
       break;
     default:
       break;
@@ -39,8 +48,8 @@ const GameCard: React.FC<FullCard> = ({ card }: FullCard) => {
       }}
     >
       <Typography
-        variant="subtitle1"
-        sx={{ color: "purple", textAlign: "left" }}
+        variant="subtitle2"
+        sx={{ color: "purple", textAlign: "left", padding: "5px" }}
       >
         {card.name}
       </Typography>

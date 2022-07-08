@@ -1,5 +1,6 @@
 import axios from "axios";
-import { GameCardModel, User } from "../models/models";
+import { cardRaritySort } from "../helpers/cardRaritySort";
+import { FormattedFilters, GameCardModel, User } from "../models/models";
 
 interface BoolKey {
   [key: string]: boolean;
@@ -58,7 +59,54 @@ export const getUserCardCollectionSearchMatch = async (
   }
 };
 
-// ALL GETS
+export const getUserCardCollectionWithFilters = async (
+  user_id: number,
+  filters: BoolKey
+): Promise<GameCardModel[] | string> => {
+  try {
+    // determine what rarities to return
+    const rarityValuesArray: number[] = await cardRaritySort(filters);
+
+    const { data, status } = await axios.get<GameCardModel[]>(
+      `http://localhost:3001/user_collection/rarity-filter/${user_id}/${rarityValuesArray}`
+    );
+
+    // 👇️ "response status is: 200"
+    console.log("status of getAllCardsWithFilters", status);
+
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.message;
+    } else {
+      return "An unexpected error occurred";
+    }
+  }
+};
+
+export const getUserCardCollectionWithFilters2 = async (
+  filters: FormattedFilters
+): Promise<GameCardModel[] | string> => {
+  console.log("filters argument in getUserCardCollectionWithFilters2", filters);
+  try {
+    const { data, status } = await axios.get<GameCardModel[]>(
+      `http://localhost:3001/user-cards-filter?rarities=${filters.rarityValues}&namesearch=${filters.nameSearch}&userid=${filters.id}`
+    );
+
+    // 👇️ "response status is: 200"
+    console.log("status of getAllCardsWithFilters2", status);
+
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.message;
+    } else {
+      return "An unexpected error occurred";
+    }
+  }
+};
+
+// ALL CARDS GETS
 
 export const getAllCards = async (): Promise<GameCardModel[] | string> => {
   try {
@@ -107,32 +155,10 @@ export const getAllCardsWithFilters = async (
 ): Promise<GameCardModel[] | string> => {
   try {
     console.log("filters value", filters);
-    const rarityValuesArray: number[] = [];
-    Object.keys(filters).forEach((filter) => {
-      console.log("filters in forEach", filters[filter]);
-      if (filters[filter]) {
-        let numRarity = 0;
-        switch (filter) {
-          case "royal":
-            numRarity = 1;
-            break;
-          case "noble":
-            numRarity = 2;
-            break;
-          case "artisan":
-            numRarity = 3;
-            break;
-          case "peasant":
-            numRarity = 4;
-            break;
-          default:
-            break;
-        }
-        rarityValuesArray.push(numRarity);
-        console.log("rarityValuesArray", rarityValuesArray);
-      }
-    });
-    // 👇️ const data: GetUsersResponse
+
+    // determine which rarities to return
+    const rarityValuesArray: number[] = await cardRaritySort(filters);
+
     const { data, status } = await axios.get<GameCardModel[]>(
       `http://localhost:3001/all-cards/${rarityValuesArray}`
     );
@@ -140,6 +166,25 @@ export const getAllCardsWithFilters = async (
     // 👇️ "response status is: 200"
     console.log("status of getAllCardsWithFilters", status);
 
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      return error.message;
+    } else {
+      return "An unexpected error occurred";
+    }
+  }
+};
+
+export const getAllCardsWithFilters2 = async (
+  filters: FormattedFilters
+): Promise<GameCardModel[] | string> => {
+  try {
+    const { data, status } = await axios.get<GameCardModel[]>(
+      `http://localhost:3001/all-cards-filter?rarities=${filters.rarityValues}&namesearch=${filters.nameSearch}`
+    );
+
+    // 👇️ "response status is: 200"
     return data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

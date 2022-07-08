@@ -21,3 +21,13 @@ export interface RarityFilter {
   artisan: boolean;
   peasant: boolean;
 }
+
+export interface BoolKey {
+  [key: string]: boolean;
+}
+
+export interface FormattedFilters {
+  rarityValues: number[];
+  nameSearch?: string;
+  id?: number;
+}
