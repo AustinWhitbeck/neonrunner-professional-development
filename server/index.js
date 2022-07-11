@@ -3,12 +3,6 @@ const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const mysql = require("mysql");
 const cors = require("cors");
-
-// PASSPORT SETUP
-// const passport = require("passport");
-// const local = require("./strategies/local");
-// const authRoute = require("./auth");
-// const session = require("express-session");
 dotenv.config();
 
 const app = express();
@@ -17,10 +11,6 @@ const port = process.env.EXPRESS_PORT;
 app.use(cors());
 // needs to be changed into json when coming from express
 app.use(express.json());
-
-// PASSPORT SETUP
-// app.use(passport.initialize());
-// app.use(passport.session());
 
 const db = mysql.createConnection({
   user: "root",
@@ -34,10 +24,6 @@ db.connect();
 
 // res = what the front and will show (sent to front end)
 // req = front end requesting something from the backend
-
-// PASSPORT SETUP
-
-// app.use("/auth", authRoute);
 
 // *** GET REQUESTS *** //
 
@@ -114,6 +100,47 @@ app.get("/all-cards-filter", (req, res) => {
 });
 
 // ** SPECIFIC USER ** //
+
+app.get("/login/:username/:password", async (req, res) => {
+  // ** Notes on hashing ** //
+  // second arg of hash() is how many times the password is hashed.
+  // 10 is standard, fast but secure.
+
+  const password = req.params.password;
+  console.log("🚀 ~ file: index.js ~ line 110 ~ app.get ~ password", password);
+  const username = req.params.username;
+  console.log("🚀 ~ file: index.js ~ line 112 ~ app.get ~ username", username);
+
+  try {
+    // const hashedPassword = await bcrypt.hash(password, 10);
+    // console.log(
+    //   "🚀 ~ file: index.js ~ line 116 ~ app.get ~ hashedPassword",
+    //   hashedPassword
+    // );
+
+    // call the db variable to start an SQL statement
+    // when putting the values, for security, pass questions marks and then an array (in the same order) with the variables we are using
+    // as declared above
+    db.query(
+      `SELECT * FROM users WHERE username="${username}" AND password="${password}"`,
+      (err, result) => {
+        if (err) {
+          console.log("error value", err);
+        } else {
+          res.send(result);
+          console.log(
+            "🚀 ~ file: index.js ~ line 131 ~ app.get ~ result",
+            result
+          );
+          console.log("checked login info correctly!");
+        }
+      }
+    );
+  } catch {
+    console.log("catch in login");
+    res.redirect("/login");
+  }
+});
 
 app.get("/user_collection/:id", (req, res) => {
   const id = req.params.id;
@@ -222,14 +249,14 @@ app.post("/create-user", async (req, res) => {
   // second arg of hash() is how many times the password is hashed.
   // 10 is standard, fast but secure.
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    // const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
     // call the db variable to start an SQL statement
     // when putting the values, for security, pass questions marks and then an array (in the same order) with the variables we are using
     // as declared above
     db.query(
       "INSERT INTO users (name, username, password, avatar) VALUES (?,?,?,?)",
-      [req.body.name, req.body.username, hashedPassword, req.body.avatar],
+      [req.body.name, req.body.username, req.body.password, req.body.avatar],
       (err, result) => {
         if (err) {
           console.log("error value", err);
@@ -251,10 +278,6 @@ app.post("/custom-card", (req, res) => {
   const defense = req.body.defense;
   const rarity = req.body.rarity;
   const flavor = req.body.flavor_text;
-
-  // call the db variable to start an SQL statement
-  // when putting the values, for security, pass questions marks and then an array (in the same order) with the variables we are using
-  // as declared above
 
   db.query(
     "INSERT INTO all_cards (name, attack, defense, flavor_text, rarity) VALUES (?,?,?,?,?)",

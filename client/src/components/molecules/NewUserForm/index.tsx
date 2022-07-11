@@ -1,7 +1,8 @@
 import { Button, Card, TextField, Typography } from "@mui/material";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { User } from "../../../models/models";
-import { addNewUser, getAllUsers } from "../../../repository";
+import { addNewUser, handleLogin } from "../../../repository";
 
 interface Props {
   props: {
@@ -11,17 +12,11 @@ interface Props {
 }
 
 const NewUserForm: React.FC<Props> = ({ props }: Props) => {
-  // const { currentUser } = useContext(userContext);
-  // console.log("current user value", currentUser);
-
-  // TODO: Look at Contact Support in molecules in the PWA
-  // As an example of making this whole structure into an object to iterate over.
+  const navigate = useNavigate();
   const [name, setName] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordConfirm, setPasswordConfirm] = useState<string>("");
-
-  const [allUsers, setAllUsers] = useState<User[]>([]);
 
   // start with return, then if signup is clicked change form to signup.
   const [returnUser, setReturnUser] = useState<boolean>(true);
@@ -68,26 +63,16 @@ const NewUserForm: React.FC<Props> = ({ props }: Props) => {
     }
   };
 
-  const checkUserMatch = (): void => {
-    const matchedUser = allUsers.find((user) => user.username == username);
-    if (matchedUser) {
+  const submitLogin = async (): Promise<void> => {
+    const matchedUser = await handleLogin(username, password);
+    if (matchedUser.length) {
       setFormErrorMessage({ message: "Login successful!", color: "success" });
-      props.setUser(matchedUser);
+      props.setUser(matchedUser[0]);
+      navigate("/collection");
     } else {
       setFormErrorMessage({ message: "Login error", color: "error" });
     }
   };
-
-  const handleGetAllUsers = async (): Promise<void> => {
-    const fetchedUsers = await getAllUsers();
-    if (Array.isArray(fetchedUsers)) {
-      setAllUsers(fetchedUsers);
-    }
-  };
-
-  useEffect((): void => {
-    handleGetAllUsers();
-  }, []);
 
   return (
     <div>
@@ -151,7 +136,12 @@ const NewUserForm: React.FC<Props> = ({ props }: Props) => {
         ) : (
           ""
         )}
-
+        <Button
+          onClick={returnUser ? submitLogin : handleNewUserSubmit}
+          sx={{ width: "100%" }}
+        >
+          Submit
+        </Button>
         <Button
           onClick={handleSignUp}
           sx={{
@@ -161,15 +151,6 @@ const NewUserForm: React.FC<Props> = ({ props }: Props) => {
           }}
         >
           {returnUser ? "Sign-Up" : "Cancel Sign Up"}
-        </Button>
-        <Button
-          onClick={returnUser ? checkUserMatch : handleNewUserSubmit}
-          sx={{ width: "100%" }}
-        >
-          Submit
-        </Button>
-        <Button onClick={handleGetAllUsers} sx={{ width: "100%" }}>
-          Get all Users
         </Button>
       </Card>
     </div>

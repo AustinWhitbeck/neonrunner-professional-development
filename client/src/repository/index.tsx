@@ -10,6 +10,18 @@ interface BoolKey {
 
 // USER SPECIFIC GETS
 
+export const handleLogin = async (
+  username: string,
+  password: string
+): Promise<User[]> => {
+  const { data, status } = await axios.get<User[]>(
+    `http://localhost:3001/login/${username}/${password}`
+  );
+  console.log("status for login", status);
+  console.log("data in handleLogin", data);
+  return data;
+};
+
 export const getUserCardCollection = async (
   user_id: number
 ): Promise<GameCardModel[] | string> => {
