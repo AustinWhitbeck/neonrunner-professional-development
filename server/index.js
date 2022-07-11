@@ -47,6 +47,16 @@ app.get("/all-cards", (req, res) => {
   });
 });
 
+app.get("/open-one", (req, res) => {
+  db.query("SELECT * FROM all_cards ORDER BY RAND() LIMIT 1", (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
 app.get("/all-cards/:filters", (req, res) => {
   console.log("req in filtered cards", req.params.filters);
   db.query(
@@ -292,6 +302,55 @@ app.post("/custom-card", (req, res) => {
       res.send("New Card added to all cards");
     }
   );
+});
+
+app.post("/add-one/:id", (req, res) => {
+  const card_id = req.body[0].card_id;
+  const user_id = req.params.id;
+
+  console.log("unique user_card_id", req.body[0].user_card_id);
+
+  const currentCardExists = db.query(
+    `SELECT * FROM user_cards WHERE user_id=${user_id} AND card_id=${card_id}`,
+    (err, result) => {
+      if (err) {
+        console.log("error value", err);
+      } else {
+        console.log("sent the values correctly");
+      }
+      return result;
+    }
+  );
+
+  if (currentCardExists._results.length > 0) {
+    const newCount = currentCardExists._results[0].count + 1;
+    db.query(
+      `UPDATE user_cards SET count=${newCount} WHERE user_card_id=${currentCardExists._results[0].user_card_id}`,
+      (err, result) => {
+        if (err) {
+          console.log("error value", err);
+        } else {
+          console.log("updated count to 1 card to user collection correctly");
+        }
+
+        res.send("Updated card count!");
+      }
+    );
+  } else {
+    db.query(
+      "INSERT INTO user_cards VALUES (?,?,?,?)",
+      [null, 1, card_id, user_id],
+      (err, result) => {
+        if (err) {
+          console.log("error value", err);
+        } else {
+          console.log("added 1 card to user collection correctly");
+        }
+
+        res.send("New Card added to user cards!");
+      }
+    );
+  }
 });
 
 app.listen(port, () => {

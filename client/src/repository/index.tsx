@@ -1,12 +1,18 @@
 import axios from "axios";
-import { cardRaritySort } from "../helpers/cardRaritySort";
 import { FormattedFilters, GameCardModel, User } from "../models/models";
 
-interface BoolKey {
-  [key: string]: boolean;
-}
-
 //// ** GET REQUESTS ** ////
+
+export const addOneRandomCardToUserCollection = async (
+  id: number
+): Promise<void> => {
+  const { data, status } = await axios.get<GameCardModel>(
+    `http://localhost:3001/open-one`
+  );
+  console.log("data from getting 1 random card", data);
+
+  axios.post(`http://localhost:3001/add-one/${id}`, data);
+};
 
 // USER SPECIFIC GETS
 
@@ -66,31 +72,6 @@ export const getUserCardCollectionSearchMatch = async (
       return error.message;
     } else {
       console.log("unexpected error: ", error);
-      return "An unexpected error occurred";
-    }
-  }
-};
-
-export const getUserCardCollectionWithFilters = async (
-  user_id: number,
-  filters: BoolKey
-): Promise<GameCardModel[] | string> => {
-  try {
-    // determine what rarities to return
-    const rarityValuesArray: number[] = await cardRaritySort(filters);
-
-    const { data, status } = await axios.get<GameCardModel[]>(
-      `http://localhost:3001/user_collection/rarity-filter/${user_id}/${rarityValuesArray}`
-    );
-
-    // 👇️ "response status is: 200"
-    console.log("status of getAllCardsWithFilters", status);
-
-    return data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return error.message;
-    } else {
       return "An unexpected error occurred";
     }
   }
@@ -163,32 +144,6 @@ export const getAllCardsSearchMatch = async (
 };
 
 export const getAllCardsWithFilters = async (
-  filters: BoolKey
-): Promise<GameCardModel[] | string> => {
-  try {
-    console.log("filters value", filters);
-
-    // determine which rarities to return
-    const rarityValuesArray: number[] = await cardRaritySort(filters);
-
-    const { data, status } = await axios.get<GameCardModel[]>(
-      `http://localhost:3001/all-cards/${rarityValuesArray}`
-    );
-
-    // 👇️ "response status is: 200"
-    console.log("status of getAllCardsWithFilters", status);
-
-    return data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return error.message;
-    } else {
-      return "An unexpected error occurred";
-    }
-  }
-};
-
-export const getAllCardsWithFilters2 = async (
   filters: FormattedFilters
 ): Promise<GameCardModel[] | string> => {
   try {
@@ -197,6 +152,7 @@ export const getAllCardsWithFilters2 = async (
     );
 
     // 👇️ "response status is: 200"
+    console.log("status of get All cards", status);
     return data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

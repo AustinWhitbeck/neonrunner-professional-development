@@ -1,23 +1,14 @@
-import {
-  Box,
-  Button,
-  Container,
-  LinearProgress,
-  Typography,
-} from "@mui/material";
+import { Box, Container, LinearProgress, Typography } from "@mui/material";
 import React, { ReactNode, useEffect, useState } from "react";
 import { cardRaritySort } from "../../../helpers/cardRaritySort";
 import { FormattedFilters, GameCardModel, User } from "../../../models/models";
 import {
   getAllCards,
-  getAllCardsSearchMatch,
   getAllCardsWithFilters,
-  getAllCardsWithFilters2,
   getUserCardCollection,
-  getUserCardCollectionSearchMatch,
-  getUserCardCollectionWithFilters,
   getUserCardCollectionWithFilters2,
 } from "../../../repository";
+import AddOneRandomCard from "../../atoms/AddOneRandomCard";
 import GameCard from "../../molecules/GameCard";
 import CardCollectionManager from "../../organisms/CardCollectionManager";
 import RarityFiltersForm from "../../organisms/RarityFiltersForm";
@@ -43,26 +34,6 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
 
   // TODO: experimental for building sql statement
   const [nameSearch, setNameSearch] = useState<string>("");
-
-  const handleNameSearch = async (text: string): Promise<void> => {
-    console.log(`search name search ${text}`);
-    let fetchedCards: string | GameCardModel[] = [];
-    if (collectionType) {
-      fetchedCards = await getAllCardsSearchMatch(text);
-    } else {
-      fetchedCards = await getUserCardCollectionSearchMatch(
-        currentUser.user_id as number,
-        text
-      );
-    }
-    if (Array.isArray(fetchedCards)) {
-      if (collectionType) {
-        setAllCards(fetchedCards);
-      } else {
-        setUserCollection(fetchedCards);
-      }
-    }
-  };
 
   const handleNameSearchClear = async (): Promise<void> => {
     let fetchedCards: string | GameCardModel[] = [];
@@ -120,23 +91,6 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
     setFiltersModalOpen(!filtersModalOpen);
   };
 
-  const handleFiltersSubmit = (): void => {
-    if (collectionType) {
-      getAllCardsWithFilters(rarityFilters).then((data) => {
-        setAllCards(data as GameCardModel[]);
-        setFiltersModalOpen(false);
-      });
-    } else {
-      getUserCardCollectionWithFilters2({
-        id: currentUser.user_id as number,
-        rarityValues: cardRaritySort(rarityFilters),
-      }).then((data) => {
-        setUserCollection(data as GameCardModel[]);
-        setFiltersModalOpen(false);
-      });
-    }
-  };
-
   // Name Search functions
 
   const handleSearchTextChange = (text: string): void => {
@@ -155,7 +109,7 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
       formattedFilters.nameSearch = nameSearch;
     }
     if (collectionType) {
-      getAllCardsWithFilters2(formattedFilters).then((data) => {
+      getAllCardsWithFilters(formattedFilters).then((data) => {
         console.log("data value", data);
         setAllCards(data as GameCardModel[]);
         setFiltersModalOpen(false);
@@ -237,7 +191,7 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
               nameSearch={nameSearch}
               setSearchText={handleSearchTextChange}
             />
-            <Button onClick={handleAllFiltersSubmit}>All Filter Search</Button>
+            <AddOneRandomCard currentUser={currentUser} />
           </Box>
           <Box marginTop="10px" sx={{ width: "100%" }}>
             {loading ? <LinearProgress variant="indeterminate" /> : ""}
@@ -261,7 +215,7 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
           filterValues={rarityFilters}
           toggleFiltersModal={toggleFiltersModal}
           handleModalChange={handleModalChange}
-          handleFiltersSubmit={handleFiltersSubmit}
+          handleFiltersSubmit={handleAllFiltersSubmit}
           handleResetRarityFilters={handleResetRarityFilters}
         />
       </Box>
