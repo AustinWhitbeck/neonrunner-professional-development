@@ -191,7 +191,10 @@ const UserCollection: React.FC<Props> = ({ currentUser }: Props) => {
               nameSearch={nameSearch}
               setSearchText={handleSearchTextChange}
             />
-            <AddOneRandomCard currentUser={currentUser} />
+            <AddOneRandomCard
+              currentUser={currentUser}
+              handleGetUserCollection={handleGetUserCollection}
+            />
           </Box>
           <Box marginTop="10px" sx={{ width: "100%" }}>
             {loading ? <LinearProgress variant="indeterminate" /> : ""}
